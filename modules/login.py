@@ -4,16 +4,19 @@ def create_file(file_name) :
             account_dict = {"username": [], "password": []}
             new_file.write("{}".format(account_dict))
 
-def check_existing_account() :
+def check_file(file_name) :
     try :
-        with open("account.txt", "r") as pull_file :
-            existing_account_dict = eval(pull_file.read())
-        return existing_account_dict
+        with open(file_name, "r") as pull_file :
+            f = eval(pull_file.read())
+        return f
     except :
-        create_file("account.txt")
-        with open("account.txt", "r") as pull_file :
-            existing_account_dict = eval(pull_file.read())
-        return existing_account_dict
+        create_file(file_name)
+        with open(file_name, "r") as pull_file :
+            f = eval(pull_file.read())
+        return f
+      
+def show(frame) :
+  frame.lift()
 
 def create_account(existing_account_dict) :
     existing_account_dict["username"].append(create_username)
@@ -22,15 +25,19 @@ def create_account(existing_account_dict) :
     with open("account.txt", "w") as out_file :
         out_file.write("{}".format(existing_account_dict))
 
-def login(input_username, input_password) :
-    existing_account_dict = check_existing_account()
+def login(input_username, input_password, frame) :
+    existing_account_dict = check_file("account.txt")
 
     username = input_username.get()
     password = input_password.get()
 
-    index = existing_account_dict["username"].index(username)
-
-    if (username in existing_account_dict["username"] and password == existing_account_dict["password"][index]):
+    if (username in existing_account_dict["username"]) :
+      index = existing_account_dict["username"].index(username)
+      if (password == existing_account_dict["password"][index]) :
         print("Authorized")
+        show(frame)
+      else :
+        print("Please enter a correct password")
     else :
-        print("Fail")
+      print("Username not found")
+        

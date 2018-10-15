@@ -14,22 +14,24 @@ def check_file(file_name) :
         with open(file_name, "r") as pull_file :
             f = eval(pull_file.read())
         return f
-      
+
 def show(frame) :
   frame.lift()
 
-def create_account(existing_account_dict) :
-    existing_account_dict["username"].append(create_username)
-    existing_account_dict["password"].append(create_password)
+def create_account(entry_username, entry_password) :
+    existing_account_dict = check_file("account.txt")
+
+    existing_account_dict["username"].append(entry_username)
+    existing_account_dict["password"].append(entry_password)
 
     with open("account.txt", "w") as out_file :
         out_file.write("{}".format(existing_account_dict))
 
-def login(input_username, input_password, frame) :
+def login(entry_username, entry_password, frame) :
     existing_account_dict = check_file("account.txt")
 
-    username = input_username.get()
-    password = input_password.get()
+    username = entry_username.get()
+    password = entry_password.get()
 
     if (username in existing_account_dict["username"]) :
       index = existing_account_dict["username"].index(username)
@@ -40,4 +42,3 @@ def login(input_username, input_password, frame) :
         print("Please enter a correct password")
     else :
       print("Username not found")
-        

@@ -1,97 +1,146 @@
 import tkinter as tk
 from modules.login import *
 
-# Main Window
-root = tk.Tk()
-root.title("Kiddo Learn")
-root.geometry("500x500")
-root["bg"] = "white"
-def_bg = root.cget("bg")
+HEADING = "Verdana 16 bold"
 
-container = tk.Frame(root, bg=def_bg, padx=100, pady=100)
-container.pack(fill="both", expand=True)
+class Application(tk.Tk):
+    def __init__(self, *args, **kwargs):
+        tk.Tk.__init__(self, *args, **kwargs)
+        self.title("Kiddo Learn")
+        self.geometry("400x400")
+        container = tk.Frame(self)
+        container.pack(side="top", expand=True, fill="both")
 
-# Login Menu
-lg = tk.Frame(container, bg=def_bg)
-lg_form_fr = tk.Frame(lg, bg=def_bg)
+        self.frames = {}
 
-lg_title_lb = tk.Label(lg, text="Kiddo Learn", fg="orange", bg=def_bg, font="Helvetica 25 bold")
-lg_username_lb = tk.Label(lg_form_fr, bg=def_bg, text="Username: ")
-lg_password_lb = tk.Label(lg_form_fr, bg=def_bg, text="Password:  ")
+        for F in (LoginMenu, CreateAccountMenu, MainMenu):
+            frame = F(container, self)
+            self.frames[F] = frame
+            frame.place(x=0, y=0, relwidth=1, relheight=1)
 
-lg_username_ent = tk.Entry(lg_form_fr)
-lg_password_ent = tk.Entry(lg_form_fr)
+        self.show_frame(LoginMenu)
 
-lg_login_bt = tk.Button(lg, text="Login", command=lambda : login(lg_username_ent, lg_password_ent, main))
-lg_create_bt = tk.Button(lg, text="Create New Account", command=lambda : (lg.pack_forget(), display_crtacc()))
+    def show_frame(self, page):
+        frame = self.frames[page]
+        frame.tkraise()
 
-def display_lg() :
-    lg.pack(fill="both", expand=True)
+class LoginMenu(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
-    lg_title_lb.pack()
+        self.controller = controller
 
-    lg_form_fr.pack(pady=5)
+        heading = tk.Label(self, text="LOGIN", font=HEADING)
+        heading.pack()
 
-    lg_username_lb.grid(row=1, column=1)
-    lg_username_ent.grid(row=1, column=2)
+        container = tk.Frame(self)
+        container.pack()
 
-    lg_password_lb.grid(row=2, column=1)
-    lg_password_ent.grid(row=2, column=2)
+        self.message_var = tk.StringVar()
+        message = tk.Label(container, textvariable=self.message_var)
+        message.grid(row=3, column=1, columnspan=2)
 
-    lg_login_bt.pack()
-    lg_create_bt.pack(pady=5)
+        username = tk.Label(container, text="Username:")
+        username.grid(row=1, column=1)
 
-# Create Account Menu
-crtacc = tk.Frame(container, bg=def_bg)
-crtacc_form_fr = tk.Frame(crtacc, bg=def_bg)
+        password = tk.Label(container, text="Password:")
+        password.grid(row=2, column=1)
 
-crtacc_title_lb = tk.Label(crtacc, text="Create New Account", bg=def_bg, font="Helvetica 15 bold")
-crtacc_username_lb = tk.Label(crtacc_form_fr, bg=def_bg, text="Username: ")
-crtacc_password_lb = tk.Label(crtacc_form_fr, bg=def_bg, text="Password:  ")
-crtacc_confirm_lb = tk.Label(crtacc_form_fr, bg=def_bg, text="Confirm Password:  ")
+        self.entry_username = tk.Entry(container)
+        self.entry_username.grid(row=1, column=2)
 
-crtacc_username_ent = tk.Entry(crtacc_form_fr)
-crtacc_password_ent = tk.Entry(crtacc_form_fr)
-crtacc_confirm_ent = tk.Entry(crtacc_form_fr)
+        self.entry_password = tk.Entry(container)
+        self.entry_password.grid(row=2, column=2)
 
-crtacc_create_bt = tk.Button(crtacc, text="Confirm", command=lambda : (crtacc.pack_forget(), display_lg()))
+        button_login = tk.Button(self, text="Login", command=self.check_login)
+        button_login.pack()
 
-def display_crtacc() :
-    crtacc.pack(fill="both", expand=True)
+        button_create = tk.Button(self, text="Create New Account", command=lambda : controller.show_frame(CreateAccountMenu))
+        button_create.pack()
 
-    crtacc_title_lb.pack(fill="both")
+    def check_login(self):
+        authorized = login(self.entry_username, self.entry_password)
+        if authorized:
+            self.controller.show_frame(MainMenu)
+        else:
+            self.message_var.set("Invalid username and/or password")
 
-    crtacc_form_fr.pack(pady=5)
 
-    crtacc_username_lb.grid(row=1, column=1, sticky="e")
-    crtacc_username_ent.grid(row=1, column=2, sticky="w")
+class CreateAccountMenu(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
 
-    crtacc_password_lb.grid(row=2, column=1, sticky="e")
-    crtacc_password_ent.grid(row=2, column=2, sticky="w")
+        self.controller = controller
 
-    crtacc_confirm_lb.grid(row=3, column=1, sticky="e")
-    crtacc_confirm_ent.grid(row=3, column=2, sticky="w")
+        heading = tk.Label(self, text="CREATE NEW ACCOUNT", font=HEADING)
+        heading.pack()
 
-    crtacc_create_bt.pack(pady=5)
+        container = tk.Frame(self)
+        container.pack()
 
-# Main Menu
-main = tk.Frame(container, bg=def_bg)
-main_profiles_fr = tk.Frame(main, bg=def_bg)
-main_info_fr = tk.Frame(main, bg=def_bg)
+        username = tk.Label(container, text="New Username:")
+        username.grid(row=1, column=1)
 
-main_title_lb = tk.Label(main, bg=def_bg, text="Main Menu", font="Times 15 bold")
-main_profiles_lb = tk.Label(main_profiles_fr, bg=def_bg, text="Profiles", font="Times 10 bold")
-main_info_lb = tk.Label(main_info_fr, bg=def_bg, text="Information", font="Times 10 bold")
+        password = tk.Label(container, text="New Password:")
+        password.grid(row=2, column=1)
 
-def display_main() :
-    main.place(relx=0.5, rely=0.5, anchor="center")
-    main_title_lb.pack()
-    main_profiles_fr.pack()
-    main_profiles_lb.pack()
-    main_info_fr.pack()
-    main_info_lb.pack()
+        confirm = tk.Label(container, text="Confirm Password:")
+        confirm.grid(row=3, column=1)
 
-# mainloop
-display_lg()
+        self.message_var = tk.StringVar()
+        message = tk.Label(container, textvariable=self.message_var)
+        message.grid(row=5, column=1, columnspan=2)
 
-root.mainloop()
+        self.entry_username = tk.Entry(container)
+        self.entry_username.grid(row=1, column=2)
+
+        self.entry_password = tk.Entry(container)
+        self.entry_password.grid(row=2, column=2)
+
+        self.entry_confirm = tk.Entry(container)
+        self.entry_confirm.grid(row=3, column=2)
+
+        button = tk.Button(self, text="Create Account", command=self.check_create_account)
+        button.pack()
+
+    def check_create_account(self):
+        username = self.entry_username.get()
+        password = self.entry_password.get()
+        confirm = self.entry_confirm.get()
+        create = False
+        existing_account_dict = check_file("account.txt")
+
+        if username != "" and password != "" and confirm != "":
+            if not(username in existing_account_dict["username"]):
+                if confirm == password:
+                    create = True
+                else:
+                    self.message_var.set("Please make sure your password is identical")
+            else:
+                self.message_var.set("Username has been taken.")
+        else:
+            self.message_var.set("Please fill in your username and password")
+
+        for i in [username, password]:
+            for letter in i:
+                if letter == " ":
+                    self.message_var.set("Please input a valid username and password")
+                    create = False
+                    break
+                else:
+                    continue
+
+        if create:
+            create_account(username, password)
+            self.controller.show_frame(LoginMenu)
+
+class MainMenu(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        heading = tk.Label(self, text="Main Menu", font=HEADING)
+        heading.pack()
+
+if __name__ == "__main__":
+    app = Application()
+    app.mainloop()

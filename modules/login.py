@@ -27,7 +27,7 @@ def create_account(entry_username, entry_password) :
     with open("account.txt", "w") as out_file :
         out_file.write("{}".format(existing_account_dict))
 
-def login(entry_username, entry_password, frame) :
+def login(entry_username, entry_password) :
     existing_account_dict = check_file("account.txt")
 
     username = entry_username.get()
@@ -36,9 +36,10 @@ def login(entry_username, entry_password, frame) :
     if (username in existing_account_dict["username"]) :
       index = existing_account_dict["username"].index(username)
       if (password == existing_account_dict["password"][index]) :
-        print("Authorized")
-        show(frame)
+        authorized = True
       else :
-        print("Please enter a correct password")
+        authorized = False
     else :
-      print("Username not found")
+      authorized = False
+
+    return authorized

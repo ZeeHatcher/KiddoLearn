@@ -2,33 +2,36 @@ import tkinter as tk
 from modules.login import *
 
 HEADING = "Verdana 16 bold"
+WINDOW_SIZE = "400x400+500+250"
 
-class Application(tk.Tk):
-    def __init__(self, *args, **kwargs):
-        tk.Tk.__init__(self, *args, **kwargs)
+class Application(tk.Toplevel):
+    def __init__(self):
+        tk.Toplevel.__init__(self)
         self.title("Kiddo Learn")
-        self.geometry("400x400")
+        self.geometry(WINDOW_SIZE)
+
         container = tk.Frame(self)
         container.pack(side="top", expand=True, fill="both")
 
         self.frames = {}
 
-        for F in (LoginMenu, CreateAccountMenu, MainMenu):
+        for F in (MainMenu, Lesson):
             frame = F(container, self)
             self.frames[F] = frame
             frame.place(x=0, y=0, relwidth=1, relheight=1)
 
-        self.show_frame(LoginMenu)
+        self.show_frame(MainMenu)
 
     def show_frame(self, page):
         frame = self.frames[page]
         frame.tkraise()
 
-class LoginMenu(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+class LoginMenu(tk.Toplevel):
+    def __init__(self):
+        tk.Toplevel.__init__(self)
 
-        self.controller = controller
+        self.title("Kiddo Learn")
+        self.geometry(WINDOW_SIZE)
 
         heading = tk.Label(self, text="LOGIN", font=HEADING)
         heading.pack()
@@ -55,22 +58,27 @@ class LoginMenu(tk.Frame):
         button_login = tk.Button(self, text="Login", command=self.check_login)
         button_login.pack()
 
-        button_create = tk.Button(self, text="Create New Account", command=lambda : controller.show_frame(CreateAccountMenu))
+        button_create = tk.Button(self, text="Create New Account", command=self.go_to_create_account)
         button_create.pack()
 
     def check_login(self):
         authorized = login(self.entry_username, self.entry_password)
         if authorized:
-            self.controller.show_frame(MainMenu)
+            self.destroy()
+            Application().mainloop()
         else:
             self.message_var.set("Invalid username and/or password")
 
+    def go_to_create_account(self):
+        self.destroy()
+        CreateAccountMenu().mainloop()
 
-class CreateAccountMenu(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+class CreateAccountMenu(tk.Toplevel):
+    def __init__(self):
+        tk.Toplevel.__init__(self)
 
-        self.controller = controller
+        self.title("Kiddo Learn")
+        self.geometry(WINDOW_SIZE)
 
         heading = tk.Label(self, text="CREATE NEW ACCOUNT", font=HEADING)
         heading.pack()
@@ -100,8 +108,11 @@ class CreateAccountMenu(tk.Frame):
         self.entry_confirm = tk.Entry(container)
         self.entry_confirm.grid(row=3, column=2)
 
-        button = tk.Button(self, text="Create Account", command=self.check_create_account)
-        button.pack()
+        button_create = tk.Button(self, text="Create Account", command=self.check_create_account)
+        button_create.pack()
+
+        button_back = tk.Button(self, text="Back To Login Menu", command=self.to_LoginMenu)
+        button_back.pack()
 
     def check_create_account(self):
         username = self.entry_username.get()
@@ -132,15 +143,30 @@ class CreateAccountMenu(tk.Frame):
 
         if create:
             create_account(username, password)
-            self.controller.show_frame(LoginMenu)
+            self.destroy()
+            LoginMenu().mainloop()
+
+    def to_LoginMenu(self):
+        self.destroy()
+        LoginMenu().mainloop()
 
 class MainMenu(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.controller = controller
 
         heading = tk.Label(self, text="Main Menu", font=HEADING)
         heading.pack()
 
+class Lesson(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+
+        heading = tk.Label(self, text="Lesson", font=HEADING)
+        heading.pack()
+
 if __name__ == "__main__":
-    app = Application()
-    app.mainloop()
+    root = tk.Tk()
+    root.withdraw()
+
+    LoginMenu().mainloop()

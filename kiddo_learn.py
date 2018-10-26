@@ -1,7 +1,8 @@
 import tkinter as tk
 from modules.login import *
 
-HEADING = "Verdana 16 bold"
+H1 = "Verdana 16 bold"
+H2 = "Verdana 12 bold"
 WINDOW_SIZE = "400x400+500+250"
 
 class Application(tk.Toplevel):
@@ -33,8 +34,8 @@ class LoginMenu(tk.Toplevel):
         self.title("Kiddo Learn")
         self.geometry(WINDOW_SIZE)
 
-        heading = tk.Label(self, text="LOGIN", font=HEADING)
-        heading.pack()
+        h1 = tk.Label(self, text="LOGIN", font=H1)
+        h1.pack()
 
         container = tk.Frame(self)
         container.pack()
@@ -80,8 +81,8 @@ class CreateAccountMenu(tk.Toplevel):
         self.title("Kiddo Learn")
         self.geometry(WINDOW_SIZE)
 
-        heading = tk.Label(self, text="CREATE NEW ACCOUNT", font=HEADING)
-        heading.pack()
+        h1 = tk.Label(self, text="CREATE NEW ACCOUNT", font=H1)
+        h1.pack()
 
         container = tk.Frame(self)
         container.pack()
@@ -119,7 +120,7 @@ class CreateAccountMenu(tk.Toplevel):
         password = self.entry_password.get()
         confirm = self.entry_confirm.get()
         create = False
-        existing_account_dict = check_file("account.txt")
+        existing_account_dict = check_file(accounts)
 
         if username != "" and password != "" and confirm != "":
             if not(username in existing_account_dict["username"]):
@@ -143,8 +144,7 @@ class CreateAccountMenu(tk.Toplevel):
 
         if create:
             create_account(username, password)
-            self.destroy()
-            LoginMenu().mainloop()
+            self.to_LoginMenu()
 
     def to_LoginMenu(self):
         self.destroy()
@@ -155,18 +155,49 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        heading = tk.Label(self, text="Main Menu", font=HEADING)
-        heading.pack()
+        h1 = tk.Label(self, text="Main Menu", font=H1)
+        h1.pack()
+
+        container = tk.Frame(self)
+        container.pack(side="top", expand=True, fill="both")
+        container.columnconfigure(0, weight=1)
+        container.columnconfigure(1, weight=1)
+
+        buttons = tk.Frame(self)
+        buttons.pack(side="top")
+
+        button_lesson = tk.Button(buttons, text="Begin Lesson")
+        button_lesson.pack(side="left")
+
+        button_test = tk.Button(buttons, text="Test")
+        button_test.pack(side="left")
+
+        profiles = tk.Frame(container)
+        profiles.grid(row=0, column=0, sticky="nsew")
+
+        info = tk.Frame(container)
+        info.grid(row=0, column=1, sticky="nsew")
+
+        h2_profiles = tk.Label(profiles, text="Profiles", font=H2)
+        h2_profiles.pack(side="top")
+
+        h2_info = tk.Label(info, text="Info", font=H2)
+        h2_info.pack(side="top")
 
 class Lesson(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        heading = tk.Label(self, text="Lesson", font=HEADING)
-        heading.pack()
+        h1 = tk.Label(self, text="Lesson", font=H1)
+        h1.pack()
 
 if __name__ == "__main__":
     root = tk.Tk()
     root.withdraw()
 
-    LoginMenu().mainloop()
+    try:
+        check_file(r"data\accounts.txt")
+        LoginMenu().mainloop()
+    except:
+        create_file(r"data\accounts.txt")
+        CreateAccountMenu().mainloop()

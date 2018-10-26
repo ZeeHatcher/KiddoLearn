@@ -3,6 +3,8 @@ def create_file(file_name) :
         if file_name == "account.txt":
             account_dict = {"username": [], "password": []}
             new_file.write("{}".format(account_dict))
+        elif file_name == "profiles.txt":
+            profiles_dict = {"username": []}
 
 def check_file(file_name) :
     try :

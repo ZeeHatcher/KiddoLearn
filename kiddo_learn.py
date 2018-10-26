@@ -52,13 +52,13 @@ class LoginMenu(tk.Toplevel):
         self.entry_username = tk.Entry(container)
         self.entry_username.grid(row=1, column=2)
 
-        self.entry_password = tk.Entry(container)
+        self.entry_password = tk.Entry(container, show="*")
         self.entry_password.grid(row=2, column=2)
 
         button_login = tk.Button(self, text="Login", command=self.check_login)
         button_login.pack()
 
-        button_create = tk.Button(self, text="Create New Account", command=self.go_to_create_account)
+        button_create = tk.Button(self, text="Create New Account", command=self.to_CreateAccountMenu)
         button_create.pack()
 
     def check_login(self):
@@ -69,7 +69,7 @@ class LoginMenu(tk.Toplevel):
         else:
             self.message_var.set("Invalid username and/or password")
 
-    def go_to_create_account(self):
+    def to_CreateAccountMenu(self):
         self.destroy()
         CreateAccountMenu().mainloop()
 
@@ -102,10 +102,10 @@ class CreateAccountMenu(tk.Toplevel):
         self.entry_username = tk.Entry(container)
         self.entry_username.grid(row=1, column=2)
 
-        self.entry_password = tk.Entry(container)
+        self.entry_password = tk.Entry(container, show="*")
         self.entry_password.grid(row=2, column=2)
 
-        self.entry_confirm = tk.Entry(container)
+        self.entry_confirm = tk.Entry(container, show="*")
         self.entry_confirm.grid(row=3, column=2)
 
         button_create = tk.Button(self, text="Create Account", command=self.check_create_account)

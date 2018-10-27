@@ -176,11 +176,11 @@ class MainMenu(tk.Frame):
         container.columnconfigure(0, weight=1)
         container.columnconfigure(1, weight=1)
 
-        profiles = Profiles(container, self.controller)
-        profiles.grid(row=0, column=0)
+        self.info = ProfilesInfo(container, self.controller, self)
+        self.info.grid(row=0, column=1)
 
-        info = ProfilesInfo(container, self.controller)
-        info.grid(row=0, column=1)
+        self.profiles = Profiles(container, self.controller, self)
+        self.profiles.grid(row=0, column=0)
 
         buttons = tk.Frame(self)
         buttons.pack(side="top")
@@ -191,13 +191,13 @@ class MainMenu(tk.Frame):
         button_test = tk.Button(buttons, text="Test")
         button_test.pack(side="left")
 
-
 class Profiles(tk.Frame):
     adding_profile = False
 
-    def __init__(self, parent, main):
+    def __init__(self, parent, app, main):
         tk.Frame.__init__(self, parent)
-        self.user = main.user
+        self.user = app.user
+        self.info = main.info
 
         h2 = tk.Label(self, text="Profiles", font=H2)
         h2.grid(row=0, column=0)
@@ -205,14 +205,35 @@ class Profiles(tk.Frame):
         button_add = tk.Button(self, text="Add Profile", command=self.add_profile)
         button_add.grid(row=0, column=1)
 
+        self.update_profile()
+
     def add_profile(self):
         if Profiles.adding_profile == False:
             Profiles.adding_profile = True
-            AddProfileMenu().mainloop()
+            AddProfileMenu(self).mainloop()
+
+    def update_profile(self):
+        f = format_txt(self.user)
+
+        try:
+            profiles = check_file(f)
+        except:
+            create_file(f)
+            profiles = check_file(f)
+
+        row_count = 1
+        for prof in profiles:
+            name = prof["name"]
+            age = prof["age"]
+
+            Profile(self, name, self.info).grid(row=row_count, column=0, columnspan=2)
+            row_count += 1
+
 
 class AddProfileMenu(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, parent):
         tk.Toplevel.__init__(self)
+        self.parent = parent
 
         self.protocol("WM_DELETE_WINDOW", self.cancel_profile)
 
@@ -240,13 +261,15 @@ class AddProfileMenu(tk.Toplevel):
         self.entry_age = tk.Entry(entries)
         self.entry_age.grid(row=1, column=1)
 
+        self.gender_var = tk.StringVar()
+
         self.entry_gender = tk.Frame(entries)
         self.entry_gender.grid(row=2, column=1)
 
-        self.entry_gender_m = tk.Radiobutton(self.entry_gender, text="Male", value="male")
+        self.entry_gender_m = tk.Radiobutton(self.entry_gender, text="Male", variable=self.gender_var, value="Male")
         self.entry_gender_m.pack(side="left")
 
-        self.entry_gender_f = tk.Radiobutton(self.entry_gender, text="Female", value="female")
+        self.entry_gender_f = tk.Radiobutton(self.entry_gender, text="Female", variable=self.gender_var, value="Female")
         self.entry_gender_f.pack(side="left")
 
         buttons = tk.Frame(container)
@@ -259,6 +282,26 @@ class AddProfileMenu(tk.Toplevel):
         button_cancel.pack(side="left")
 
     def create_profile(self):
+        f = format_txt(self.parent.user)
+        try:
+            profiles = check_file(f)
+        except:
+            create_file(f)
+            profiles = check_file(f)
+
+        prof = {"name": self.entry_name.get(),
+                "age": self.entry_age.get(),
+                "gender": self.gender_var.get(),
+                "completed": "0",
+                "points": "0",
+                "grade": "~"
+                }
+        profiles.append(prof)
+
+        with open(f, "w") as out_file:
+            out_file.write("{}".format(profiles))
+
+        self.parent.update_profile()
         Profiles.adding_profile = False
         self.destroy()
 
@@ -267,12 +310,52 @@ class AddProfileMenu(tk.Toplevel):
         self.destroy()
 
 class ProfilesInfo(tk.Frame):
-    def __init__(self, parent, main):
+    def __init__(self, parent, app, main):
         tk.Frame.__init__(self, parent)
-        self.user = main.user
+        self.user = app.user
 
         h2 = tk.Label(self, text="Info", font=H2)
-        h2.pack(side="top")
+        h2.grid(row=0, column=0, columnspan=2)
+
+        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Number Of Points", "Grade"]
+
+        row_count = 1
+        for info in self.info_list:
+            tk.Label(self, text=info).grid(row=row_count, column=0, sticky="w")
+            row_count += 1
+            
+        self.data = {}
+
+    def display_values(self):
+        row_count = 1
+        for val in self.value_list:
+            value_var = tk.StringVar()
+            value_var.set(val)
+            tk.Label(self, textvariable=value_var).grid(row=row_count, column=1)
+            row_count += 1
+
+class Profile(tk.Button):
+    def __init__(self, parent, name, info):
+        tk.Button.__init__(self, parent, text=name, command=self.update_info_data)
+        self.user = parent.user
+        self.name = name
+        self.info = info
+
+    def update_info_data(self):
+        f = format_txt(self.user)
+        try:
+            profiles = check_file(f)
+        except:
+            create_file(f)
+            profiles = check_file(f)
+
+        for prof in profiles:
+            if self.name == prof["name"]:
+                self.info.data = prof
+            else:
+                continue
+
+        self.info.display_values()
 
 class Lesson(tk.Frame):
     def __init__(self, parent, controller):

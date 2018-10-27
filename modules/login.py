@@ -1,6 +1,6 @@
 accounts = r"data\accounts.txt"
 
-def create_user_data(name):
+def format_txt(name):
     f = "data\\" + name + ".txt"
     return f
 

@@ -1,34 +1,12 @@
 import tkinter as tk
 from modules.login import *
+from modules.profiles import *
 
 H1 = "Verdana 16 bold"
 H2 = "Verdana 12 bold"
 # MINI
 MEDIUM = "400x400+500+250"
 # LARGE
-
-class Application(tk.Toplevel):
-    def __init__(self, user):
-        tk.Toplevel.__init__(self)
-        self.title("Kiddo Learn")
-        self.geometry(MEDIUM)
-        self.user = user
-
-        container = tk.Frame(self)
-        container.pack(side="top", expand=True, fill="both")
-
-        self.frames = {}
-
-        for F in (MainMenu, Lesson):
-            frame = F(container, self)
-            self.frames[F] = frame
-            frame.place(x=0, y=0, relwidth=1, relheight=1)
-
-        self.show_frame(MainMenu)
-
-    def show_frame(self, page):
-        frame = self.frames[page]
-        frame.tkraise()
 
 class LoginMenu(tk.Toplevel):
     def __init__(self):
@@ -68,6 +46,7 @@ class LoginMenu(tk.Toplevel):
     def check_login(self):
         authorized = login(self.entry_username, self.entry_password)
         username = self.entry_username.get()
+
         if authorized:
             self.destroy()
             Application(username).mainloop()
@@ -152,7 +131,7 @@ class CreateAccountMenu(tk.Toplevel):
                 continue
 
         if create:
-            f = create_user_data(username)
+            f = format_txt(username)
             create_file(f)
             create_account(username, password)
             self.to_LoginMenu()
@@ -160,6 +139,29 @@ class CreateAccountMenu(tk.Toplevel):
     def to_LoginMenu(self):
         self.destroy()
         LoginMenu().mainloop()
+
+class Application(tk.Toplevel):
+    def __init__(self, user):
+        tk.Toplevel.__init__(self)
+        self.title("Kiddo Learn")
+        self.geometry(MEDIUM)
+        self.user = user
+
+        container = tk.Frame(self)
+        container.pack(side="top", expand=True, fill="both")
+
+        self.frames = {}
+
+        for F in (MainMenu, Lesson):
+            frame = F(container, self)
+            self.frames[F] = frame
+            frame.place(x=0, y=0, relwidth=1, relheight=1)
+
+        self.show_frame(MainMenu)
+
+    def show_frame(self, page):
+        frame = self.frames[page]
+        frame.tkraise()
 
 class MainMenu(tk.Frame):
     def __init__(self, parent, controller):
@@ -174,10 +176,10 @@ class MainMenu(tk.Frame):
         container.columnconfigure(0, weight=1)
         container.columnconfigure(1, weight=1)
 
-        profiles = Profiles(container)
+        profiles = Profiles(container, self.controller)
         profiles.grid(row=0, column=0)
 
-        info = ProfilesInfo(container)
+        info = ProfilesInfo(container, self.controller)
         info.grid(row=0, column=1)
 
         buttons = tk.Frame(self)
@@ -193,8 +195,9 @@ class MainMenu(tk.Frame):
 class Profiles(tk.Frame):
     adding_profile = False
 
-    def __init__(self, parent):
+    def __init__(self, parent, main):
         tk.Frame.__init__(self, parent)
+        self.user = main.user
 
         h2 = tk.Label(self, text="Profiles", font=H2)
         h2.grid(row=0, column=0)
@@ -264,8 +267,9 @@ class AddProfileMenu(tk.Toplevel):
         self.destroy()
 
 class ProfilesInfo(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, main):
         tk.Frame.__init__(self, parent)
+        self.user = main.user
 
         h2 = tk.Label(self, text="Info", font=H2)
         h2.pack(side="top")

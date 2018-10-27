@@ -3,13 +3,16 @@ from modules.login import *
 
 H1 = "Verdana 16 bold"
 H2 = "Verdana 12 bold"
-WINDOW_SIZE = "400x400+500+250"
+# MINI
+MEDIUM = "400x400+500+250"
+# LARGE
 
 class Application(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, user):
         tk.Toplevel.__init__(self)
         self.title("Kiddo Learn")
-        self.geometry(WINDOW_SIZE)
+        self.geometry(MEDIUM)
+        self.user = user
 
         container = tk.Frame(self)
         container.pack(side="top", expand=True, fill="both")
@@ -32,7 +35,7 @@ class LoginMenu(tk.Toplevel):
         tk.Toplevel.__init__(self)
 
         self.title("Kiddo Learn")
-        self.geometry(WINDOW_SIZE)
+        self.geometry(MEDIUM)
 
         h1 = tk.Label(self, text="LOGIN", font=H1)
         h1.pack()
@@ -42,19 +45,19 @@ class LoginMenu(tk.Toplevel):
 
         self.message_var = tk.StringVar()
         message = tk.Label(container, textvariable=self.message_var)
-        message.grid(row=3, column=1, columnspan=2)
+        message.grid(row=2, column=0, columnspan=2)
 
         username = tk.Label(container, text="Username:")
-        username.grid(row=1, column=1)
+        username.grid(row=0, column=0)
 
         password = tk.Label(container, text="Password:")
-        password.grid(row=2, column=1)
+        password.grid(row=1, column=0)
 
         self.entry_username = tk.Entry(container)
-        self.entry_username.grid(row=1, column=2)
+        self.entry_username.grid(row=0, column=1)
 
         self.entry_password = tk.Entry(container, show="*")
-        self.entry_password.grid(row=2, column=2)
+        self.entry_password.grid(row=1, column=1)
 
         button_login = tk.Button(self, text="Login", command=self.check_login)
         button_login.pack()
@@ -64,9 +67,10 @@ class LoginMenu(tk.Toplevel):
 
     def check_login(self):
         authorized = login(self.entry_username, self.entry_password)
+        username = self.entry_username.get()
         if authorized:
             self.destroy()
-            Application().mainloop()
+            Application(username).mainloop()
         else:
             self.message_var.set("Invalid username and/or password")
 
@@ -79,7 +83,7 @@ class CreateAccountMenu(tk.Toplevel):
         tk.Toplevel.__init__(self)
 
         self.title("Kiddo Learn")
-        self.geometry(WINDOW_SIZE)
+        self.geometry(MEDIUM)
 
         h1 = tk.Label(self, text="CREATE NEW ACCOUNT", font=H1)
         h1.pack()
@@ -120,16 +124,13 @@ class CreateAccountMenu(tk.Toplevel):
         password = self.entry_password.get()
         confirm = self.entry_confirm.get()
         create = False
-        existing_account_dict = check_file(accounts)
+        existing_accounts = check_file(accounts)
 
         if username != "" and password != "" and confirm != "":
-            if not(username in existing_account_dict["username"]):
-                if confirm == password:
-                    create = True
-                else:
-                    self.message_var.set("Please make sure your password is identical")
+            if confirm == password:
+                create = True
             else:
-                self.message_var.set("Username has been taken.")
+                self.message_var.set("Please make sure your password is identical")
         else:
             self.message_var.set("Please fill in your username and password")
 
@@ -142,7 +143,17 @@ class CreateAccountMenu(tk.Toplevel):
                 else:
                     continue
 
+        for account in existing_accounts:
+            if username == account["username"]:
+                create = False
+                self.message_var.set("Username has been taken.")
+                break
+            else:
+                continue
+
         if create:
+            f = create_user_data(username)
+            create_file(f)
             create_account(username, password)
             self.to_LoginMenu()
 
@@ -163,6 +174,12 @@ class MainMenu(tk.Frame):
         container.columnconfigure(0, weight=1)
         container.columnconfigure(1, weight=1)
 
+        profiles = Profiles(container)
+        profiles.grid(row=0, column=0)
+
+        info = ProfilesInfo(container)
+        info.grid(row=0, column=1)
+
         buttons = tk.Frame(self)
         buttons.pack(side="top")
 
@@ -172,17 +189,86 @@ class MainMenu(tk.Frame):
         button_test = tk.Button(buttons, text="Test")
         button_test.pack(side="left")
 
-        profiles = tk.Frame(container)
-        profiles.grid(row=0, column=0, sticky="nsew")
 
-        info = tk.Frame(container)
-        info.grid(row=0, column=1, sticky="nsew")
+class Profiles(tk.Frame):
+    adding_profile = False
 
-        h2_profiles = tk.Label(profiles, text="Profiles", font=H2)
-        h2_profiles.pack(side="top")
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
 
-        h2_info = tk.Label(info, text="Info", font=H2)
-        h2_info.pack(side="top")
+        h2 = tk.Label(self, text="Profiles", font=H2)
+        h2.grid(row=0, column=0)
+
+        button_add = tk.Button(self, text="Add Profile", command=self.add_profile)
+        button_add.grid(row=0, column=1)
+
+    def add_profile(self):
+        if Profiles.adding_profile == False:
+            Profiles.adding_profile = True
+            AddProfileMenu().mainloop()
+
+class AddProfileMenu(tk.Toplevel):
+    def __init__(self):
+        tk.Toplevel.__init__(self)
+
+        self.protocol("WM_DELETE_WINDOW", self.cancel_profile)
+
+        container = tk.Frame(self)
+        container.pack(side="top", expand=True, fill="both")
+
+        h2 = tk.Label(container, text="Add Profile", font=H2)
+        h2.pack(side="top")
+
+        entries = tk.Frame(container)
+        entries.pack(side="top", expand=True, fill="both")
+
+        name = tk.Label(entries, text="Name")
+        name.grid(row=0, column=0)
+
+        age = tk.Label(entries, text="Age")
+        age.grid(row=1, column=0)
+
+        gender = tk.Label(entries, text="Gender")
+        gender.grid(row=2, column=0)
+
+        self.entry_name = tk.Entry(entries)
+        self.entry_name.grid(row=0, column=1)
+
+        self.entry_age = tk.Entry(entries)
+        self.entry_age.grid(row=1, column=1)
+
+        self.entry_gender = tk.Frame(entries)
+        self.entry_gender.grid(row=2, column=1)
+
+        self.entry_gender_m = tk.Radiobutton(self.entry_gender, text="Male", value="male")
+        self.entry_gender_m.pack(side="left")
+
+        self.entry_gender_f = tk.Radiobutton(self.entry_gender, text="Female", value="female")
+        self.entry_gender_f.pack(side="left")
+
+        buttons = tk.Frame(container)
+        buttons.pack(side="top")
+
+        button_confirm = tk.Button(buttons, text="Confirm", command=self.create_profile)
+        button_confirm.pack(side="left")
+
+        button_cancel = tk.Button(buttons, text="Cancel", command=self.cancel_profile)
+        button_cancel.pack(side="left")
+
+    def create_profile(self):
+        Profiles.adding_profile = False
+        self.destroy()
+
+    def cancel_profile(self):
+        Profiles.adding_profile = False
+        self.destroy()
+
+class ProfilesInfo(tk.Frame):
+    def __init__(self, parent):
+        tk.Frame.__init__(self, parent)
+
+        h2 = tk.Label(self, text="Info", font=H2)
+        h2.pack(side="top")
 
 class Lesson(tk.Frame):
     def __init__(self, parent, controller):

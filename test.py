@@ -1,19 +1,10 @@
-class TestA():
-    def __init__(self, name, age):
-        self.name = name
-        self.age = age
+import tkinter as tk
+root = tk.Tk()
 
-        self.hobby = "Swimming"
+test_list = []
+for x in range(5):
+    test_list.append(tk.StringVar())
 
-class TestB():
-    def __init__(self, parent):
-        self.name = parent.name
-        self.age = parent.age
+print(test_list)
 
-        self.hobby = parent.hobby
-
-objA = TestA("Jon", "18")
-objB = TestB(objA)
-
-print(objA.hobby)
-print(objB.hobby)
+root.mainloop

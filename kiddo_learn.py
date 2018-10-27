@@ -319,20 +319,15 @@ class ProfilesInfo(tk.Frame):
 
         self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Number Of Points", "Grade"]
 
-        row_count = 1
-        for info in self.info_list:
-            tk.Label(self, text=info).grid(row=row_count, column=0, sticky="w")
-            row_count += 1
-            
-        self.data = {}
+        self.var_list = []
+        for x in range(6):
+            self.var_list.append(tk.StringVar())
 
-    def display_values(self):
-        row_count = 1
-        for val in self.value_list:
-            value_var = tk.StringVar()
-            value_var.set(val)
-            tk.Label(self, textvariable=value_var).grid(row=row_count, column=1)
-            row_count += 1
+        i = 0
+        for info in self.info_list:
+            tk.Label(self, text=info).grid(row=i+1, column=0, sticky="w")
+            tk.Label(self, textvariable=self.var_list[i]).grid(row=i+1, column=0, sticky="e")
+            i += 1
 
 class Profile(tk.Button):
     def __init__(self, parent, name, info):
@@ -351,11 +346,14 @@ class Profile(tk.Button):
 
         for prof in profiles:
             if self.name == prof["name"]:
-                self.info.data = prof
+                self.info.var_list[0].set(prof["name"])
+                self.info.var_list[1].set(prof["age"])
+                self.info.var_list[2].set(prof["gender"])
+                self.info.var_list[3].set(prof["completed"])
+                self.info.var_list[4].set(prof["points"])
+                self.info.var_list[5].set(prof["grade"])
             else:
                 continue
-
-        self.info.display_values()
 
 class Lesson(tk.Frame):
     def __init__(self, parent, controller):

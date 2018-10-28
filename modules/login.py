@@ -1,7 +1,7 @@
-accounts = r"data\accounts.txt"
+accounts = r"C:\Users\Jw Lim\Python\kiddo_learn-master\data\accounts.txt" #I've changed the last few lines to use this location, like the "Creds" thingy in my login_module
 
 def format_txt(name):
-    f = "data\\" + name + ".txt"
+    f = r"C:\Users\Jw Lim\Python\kiddo_learn-master\data\\" + name + ".txt" #whereas this one creates a new profile
     return f
 
 def create_file(file_name):

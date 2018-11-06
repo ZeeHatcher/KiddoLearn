@@ -14,7 +14,7 @@ H1 = "Verdana 16 bold"
 H2 = "Verdana 12 bold"
 # MINI
 MEDIUM = "400x400+500+250"
-# LARGE
+LARGE = "800x800+250+250"
 
 class LoginMenu(tk.Toplevel):
     def __init__(self):
@@ -25,6 +25,11 @@ class LoginMenu(tk.Toplevel):
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4)
+
+        logo_img = tk.PhotoImage(file="images\kiddo_learn.gif")
+        logo = tk.Label(frame, image=logo_img)
+        logo.image = logo_img
+        logo.pack(side="top", pady=10)
 
         h1 = tk.Label(frame, text="LOGIN", font=H1)
         h1.pack(side="top", pady=10)
@@ -158,7 +163,7 @@ class Application(tk.Toplevel):
     def __init__(self, user):
         tk.Toplevel.__init__(self)
         self.title("Kiddo Learn")
-        self.geometry(MEDIUM)
+        self.geometry(LARGE)
         self.user = user
 
         container = tk.Frame(self)
@@ -194,10 +199,10 @@ class MainMenu(tk.Frame):
         content.columnconfigure(1, weight=1)
 
         self.info = ProfilesInfo(content, self.controller, self)
-        self.info.grid(row=0, column=1, sticky="n", padx=10)
+        self.info.grid(row=0, column=1, sticky="nsew", padx=10)
 
         self.profiles = Profiles(content, self.controller, self)
-        self.profiles.grid(row=0, column=0, sticky="n", padx=10)
+        self.profiles.grid(row=0, column=0, sticky="nsew", padx=10)
 
         buttons = tk.Frame(frame)
         buttons.pack(side="top")
@@ -347,8 +352,8 @@ class ProfilesInfo(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.user = app.user
 
-        # self.columnconfigure(0, weight=1)
-        # self.columnconfigure(1, weight=1)
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
 
         h2 = tk.Label(self, text="Info", font=H2)
         h2.grid(row=0, column=0, columnspan=2)
@@ -362,10 +367,8 @@ class ProfilesInfo(tk.Frame):
         i = 0
         for info in self.info_list:
             tk.Label(self, text=info).grid(row=i+1, column=0, sticky="w")
-            tk.Label(self, textvariable=self.var_list[i]).grid(row=i+1, column=1, sticky="e")
+            tk.Label(self, textvariable=self.var_list[i]).grid(row=i+1, column=1, sticky="w")
             i += 1
-
-        
 
 class Profile(tk.Button):
     def __init__(self, parent, name, info):

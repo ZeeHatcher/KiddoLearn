@@ -14,7 +14,7 @@ H1 = "Verdana 16 bold"
 H2 = "Verdana 12 bold"
 # MINI
 MEDIUM = "400x400+500+250"
-LARGE = "800x800+250+250"
+LARGE = "800x600+250+250"
 
 class LoginMenu(tk.Toplevel):
     def __init__(self):
@@ -22,6 +22,7 @@ class LoginMenu(tk.Toplevel):
 
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
+        self.resizable(False, False)
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4)
@@ -79,6 +80,7 @@ class CreateAccountMenu(tk.Toplevel):
 
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
+        self.resizable(False, False)
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4)
@@ -165,13 +167,14 @@ class Application(tk.Toplevel):
         self.title("Kiddo Learn")
         self.geometry(LARGE)
         self.user = user
+        self.resizable(False, False)
 
         container = tk.Frame(self)
         container.pack(side="top", expand=True, fill="both")
 
         self.frames = {}
 
-        for F in (MainMenu, Lesson):
+        for F in (MainMenu, LessonMenu):
             frame = F(container, self)
             self.frames[F] = frame
             frame.place(x=0, y=0, relwidth=1, relheight=1)
@@ -207,7 +210,7 @@ class MainMenu(tk.Frame):
         buttons = tk.Frame(frame)
         buttons.pack(side="top")
 
-        button_lesson = tk.Button(buttons, text="Begin Lesson")
+        button_lesson = tk.Button(buttons, text="Begin Lesson", command=self.to_LessonMenu)
         button_lesson.pack(side="left")
 
         button_test = tk.Button(buttons, text="Test")
@@ -220,12 +223,18 @@ class MainMenu(tk.Frame):
         self.controller.destroy()
         LoginMenu().mainloop()
 
+    def to_LessonMenu(self):
+        if LessonMenu.profile != "":
+            self.controller.show_frame(LessonMenu)
+        else:
+            print("Nope")
+
 class Profiles(tk.Frame):
     adding_profile = False
 
-    def __init__(self, parent, app, main):
+    def __init__(self, parent, controller, main):
         tk.Frame.__init__(self, parent)
-        self.user = app.user
+        self.user = controller.user
         self.info = main.info
 
         h2 = tk.Label(self, text="Profiles", font=H2)
@@ -371,13 +380,16 @@ class ProfilesInfo(tk.Frame):
             i += 1
 
 class Profile(tk.Button):
-    def __init__(self, parent, name, info):
-        tk.Button.__init__(self, parent, text=name, command=self.update_info_data)
+    def __init__(self, parent, name, info, target):
+        tk.Button.__init__(self, parent, text=name, command=self.select_profile)
         self.user = parent.user
         self.name = name
         self.info = info
+        self.target = target
 
-    def update_info_data(self):
+    def select_profile(self):
+        self.target.profile = self.name
+        
         f = format_txt(self.user)
         try:
             profiles = check_file(f)
@@ -396,12 +408,45 @@ class Profile(tk.Button):
             else:
                 continue
 
-class Lesson(tk.Frame):
+class LessonMenu(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.profile = ""
 
-        h1 = tk.Label(self, text="Lesson", font=H1)
-        h1.pack()
+        frame = tk.Frame(self)
+        frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
+
+        h1 = tk.Label(frame, text="Lessons", font=H1)
+        h1.pack(side="top", pady=10)
+
+        lessons = tk.Frame(frame)
+        lessons.pack(side="top", pady=10)
+
+        back = tk.Button(frame, text="Back To Main Menu", command=lambda : controller.show_frame(MainMenu))
+        back.pack(side="top", pady=10)
+
+        lessons_list = ["Alphabet", "Numbers", "Animals", "Occupations", "Buildings", "Family\nMembers", "Vehicles", "Plants"]
+
+        for l in lessons_list:
+            i = lessons_list.index(l)
+
+            if i < 4:
+                LessonButton(lessons, l).grid(row=0, column=i)
+            else:
+                LessonButton(lessons, l).grid(row=1, column=i-4)
+            
+
+class LessonButton(tk.Button):
+    def __init__(self, parent, lesson):
+        self.parent = parent
+        
+        tk.Button.__init__(self, parent, text=lesson, command=self.print_prof)
+        self["width"] = 10
+        self["height"] = int(self["width"] / 2)
+
+    def print_prof(self):
+        print(LessonMenu.profile)
 
 if __name__ == "__main__":
     root = tk.Tk()

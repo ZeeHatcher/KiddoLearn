@@ -1,7 +1,6 @@
 import tkinter as tk
 from modules.login import *
-from modules.profiles import *
-
+from modules.lesson import *
 
 # Constants for color, size, fonts, etc.
 SUBMIT = "#81ff42"
@@ -27,7 +26,7 @@ class LoginMenu(tk.Toplevel):
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4)
 
-        logo_img = tk.PhotoImage(file="images\kiddo_learn.gif")
+        logo_img = tk.PhotoImage(file=r"images\kiddo_learn.gif")
         logo = tk.Label(frame, image=logo_img)
         logo.image = logo_img
         logo.pack(side="top", pady=10)
@@ -66,7 +65,8 @@ class LoginMenu(tk.Toplevel):
 
         if authorized:
             self.destroy()
-            Application(username).mainloop()
+            Application.user = username
+            Application().mainloop()
         else:
             self.message_var.set("Invalid username and/or password")
 
@@ -162,32 +162,19 @@ class CreateAccountMenu(tk.Toplevel):
         LoginMenu().mainloop()
 
 class Application(tk.Toplevel):
-    def __init__(self, user):
+    user = ""
+    def __init__(self):
         tk.Toplevel.__init__(self)
         self.title("Kiddo Learn")
         self.geometry(LARGE)
-        self.user = user
         self.resizable(False, False)
 
-        container = tk.Frame(self)
-        container.pack(side="top", expand=True, fill="both")
-
-        self.frames = {}
-
-        for F in (MainMenu, LessonMenu):
-            frame = F(container, self)
-            self.frames[F] = frame
-            frame.place(x=0, y=0, relwidth=1, relheight=1)
-
-        self.show_frame(MainMenu)
-
-    def show_frame(self, page):
-        frame = self.frames[page]
-        frame.tkraise()
+        self.active_frame = MainMenu(self)
+        self.active_frame.place(x=0, y=0, relwidth=1, relheight=1)
 
 class MainMenu(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+    def __init__(self, controller):
+        tk.Frame.__init__(self, controller)
         self.controller = controller
 
         frame = tk.Frame(self)
@@ -201,10 +188,10 @@ class MainMenu(tk.Frame):
         content.columnconfigure(0, weight=1)
         content.columnconfigure(1, weight=1)
 
-        self.info = ProfilesInfo(content, self.controller, self)
+        self.info = ProfilesInfo(content, self)
         self.info.grid(row=0, column=1, sticky="nsew", padx=10)
 
-        self.profiles = Profiles(content, self.controller, self)
+        self.profiles = Profiles(content, self)
         self.profiles.grid(row=0, column=0, sticky="nsew", padx=10)
 
         buttons = tk.Frame(frame)
@@ -220,38 +207,53 @@ class MainMenu(tk.Frame):
         button_logout.pack(side="left")
 
     def to_LoginMenu(self):
+        LessonMenu.profile = ""
+        Application.user = ""
         self.controller.destroy()
         LoginMenu().mainloop()
 
     def to_LessonMenu(self):
         if LessonMenu.profile != "":
-            self.controller.show_frame(LessonMenu)
+            self.controller.active_frame = LessonMenu(self.controller)
+            self.controller.active_frame.place(x=0, y=0, relwidth=1, relheight=1)
+            self.destroy()
         else:
-            print("Nope")
+            print("Please select a profile before proceeding.")
 
 class Profiles(tk.Frame):
     adding_profile = False
 
-    def __init__(self, parent, controller, main):
+    def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
-        self.user = controller.user
-        self.info = main.info
+        self.controller = controller
+
+        self.profiles_list = []
+
+        self.grid_propagate(False)
+        self["height"] = 300
 
         h2 = tk.Label(self, text="Profiles", font=H2)
-        h2.grid(row=0, column=0)
+        # h2.grid(row=0, column=0)
+        h2.pack(side="top")
 
         button_add = tk.Button(self, text="Add Profile", command=self.add_profile)
-        button_add.grid(row=0, column=1)
+        # button_add.grid(row=0, column=1)
+        button_add.pack(side="bottom", pady=10)
 
-        self.update_profile()
+        self.update_profiles()
 
     def add_profile(self):
         if Profiles.adding_profile == False:
             Profiles.adding_profile = True
             AddProfileMenu(self).mainloop()
 
-    def update_profile(self):
-        f = format_txt(self.user)
+    def update_profiles(self):
+        for prof in self.profiles_list:
+            prof.destroy()
+
+        self.profiles_list = []
+
+        f = format_txt(Application.user)
 
         try:
             profiles = check_file(f)
@@ -264,9 +266,74 @@ class Profiles(tk.Frame):
             name = prof["name"]
             age = prof["age"]
 
-            Profile(self, name, self.info).grid(row=row_count, column=0, columnspan=2)
+            p = Profile(self, name)
+            # p.grid(row=row_count, column=0, columnspan=2)
+            p.pack(side="top")
+            self.profiles_list.append(p)
+
             row_count += 1
 
+class Profile(tk.Button):
+    def __init__(self, parent, name):
+        tk.Button.__init__(self, parent, text=name, command=self.select_profile)
+        self.name = name
+        self.parent = parent
+        self.info = parent.controller.info
+        self.selected = False
+        self["width"] = 25
+
+    def select_profile(self):
+        LessonMenu.profile = self.name
+
+        f = format_txt(Application.user)
+        try:
+            profiles = check_file(f)
+        except:
+            create_file(f)
+            profiles = check_file(f)
+
+        for prof in profiles:
+            if self.name == prof["name"]:
+                self.info.var_list[0].set(prof["name"])
+                self.info.var_list[1].set(prof["age"])
+                self.info.var_list[2].set(prof["gender"])
+                self.info.var_list[3].set(prof["completed"])
+                self.info.var_list[4].set(prof["points"])
+                self.info.var_list[5].set(prof["grade"])
+            else:
+                continue
+
+        for prof in self.parent.profiles_list:
+            prof.selected = False
+            prof["bg"] = "#f0f0f0"
+
+        self.selected = True
+        self["bg"] = "#c4faff"
+
+class ProfilesInfo(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+
+        self.grid_propagate(False)
+        self["height"] = 300
+
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=1)
+
+        h2 = tk.Label(self, text="Info", font=H2)
+        h2.grid(row=0, column=0, columnspan=2)
+
+        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Number Of Points", "Grade"]
+
+        self.var_list = []
+        for x in range(6):
+            self.var_list.append(tk.StringVar())
+
+        for info in self.info_list:
+            i = self.info_list.index(info)
+            tk.Label(self, text=info).grid(row=i+1, column=0, sticky="w")
+            tk.Label(self, textvariable=self.var_list[i]).grid(row=i+1, column=1, sticky="e")
 
 class AddProfileMenu(tk.Toplevel):
     def __init__(self, parent):
@@ -330,7 +397,7 @@ class AddProfileMenu(tk.Toplevel):
             self.message_var.set("Please fill in the required information")
 
     def create_profile(self):
-        f = format_txt(self.parent.user)
+        f = format_txt(Application.user)
         try:
             profiles = check_file(f)
         except:
@@ -342,75 +409,32 @@ class AddProfileMenu(tk.Toplevel):
                 "gender": self.gender_var.get(),
                 "completed": "0",
                 "points": "0",
-                "grade": "~"
+                "grade": "~",
+                "stage": {"alphabet": 0,
+                          "numbers": 0,
+                          "food": 0,
+                          "animals": 0,
+                          "colors": 0,
+                          "days & months": 0
+                          }
                 }
+
         profiles.append(prof)
 
         with open(f, "w") as out_file:
             out_file.write("{}".format(profiles))
 
-        self.parent.update_profile()
+        self.parent.update_profiles()
         self.quit_profile()
 
     def quit_profile(self):
         Profiles.adding_profile = False
         self.destroy()
 
-class ProfilesInfo(tk.Frame):
-    def __init__(self, parent, app, main):
-        tk.Frame.__init__(self, parent)
-        self.user = app.user
-
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
-
-        h2 = tk.Label(self, text="Info", font=H2)
-        h2.grid(row=0, column=0, columnspan=2)
-
-        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Number Of Points", "Grade"]
-
-        self.var_list = []
-        for x in range(6):
-            self.var_list.append(tk.StringVar())
-
-        i = 0
-        for info in self.info_list:
-            tk.Label(self, text=info).grid(row=i+1, column=0, sticky="w")
-            tk.Label(self, textvariable=self.var_list[i]).grid(row=i+1, column=1, sticky="w")
-            i += 1
-
-class Profile(tk.Button):
-    def __init__(self, parent, name, info, target):
-        tk.Button.__init__(self, parent, text=name, command=self.select_profile)
-        self.user = parent.user
-        self.name = name
-        self.info = info
-        self.target = target
-
-    def select_profile(self):
-        self.target.profile = self.name
-        
-        f = format_txt(self.user)
-        try:
-            profiles = check_file(f)
-        except:
-            create_file(f)
-            profiles = check_file(f)
-
-        for prof in profiles:
-            if self.name == prof["name"]:
-                self.info.var_list[0].set(prof["name"])
-                self.info.var_list[1].set(prof["age"])
-                self.info.var_list[2].set(prof["gender"])
-                self.info.var_list[3].set(prof["completed"])
-                self.info.var_list[4].set(prof["points"])
-                self.info.var_list[5].set(prof["grade"])
-            else:
-                continue
-
 class LessonMenu(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
+    profile = ""
+    def __init__(self, controller):
+        tk.Frame.__init__(self, controller)
         self.controller = controller
         self.profile = ""
 
@@ -423,30 +447,24 @@ class LessonMenu(tk.Frame):
         lessons = tk.Frame(frame)
         lessons.pack(side="top", pady=10)
 
-        back = tk.Button(frame, text="Back To Main Menu", command=lambda : controller.show_frame(MainMenu))
+        back = tk.Button(frame, text="Back To Main Menu", command=self.to_MainMenu)
         back.pack(side="top", pady=10)
 
-        lessons_list = ["Alphabet", "Numbers", "Animals", "Occupations", "Buildings", "Family\nMembers", "Vehicles", "Plants"]
+        lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
 
         for l in lessons_list:
             i = lessons_list.index(l)
 
-            if i < 4:
-                LessonButton(lessons, l).grid(row=0, column=i)
+            if i < len(lessons_list) / 2:
+                LessonMenuButton(lessons, self, l).grid(row=0, column=i)
             else:
-                LessonButton(lessons, l).grid(row=1, column=i-4)
-            
+                LessonMenuButton(lessons, self, l).grid(row=1, column=int(i-(len(lessons_list) / 2)))
 
-class LessonButton(tk.Button):
-    def __init__(self, parent, lesson):
-        self.parent = parent
-        
-        tk.Button.__init__(self, parent, text=lesson, command=self.print_prof)
-        self["width"] = 10
-        self["height"] = int(self["width"] / 2)
-
-    def print_prof(self):
-        print(LessonMenu.profile)
+    def to_MainMenu(self):
+        LessonMenu.profile = ""
+        self.controller.active_frame = MainMenu(self.controller)
+        self.controller.active_frame.place(x=0, y=0, relwidth=1, relheight=1)
+        self.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()

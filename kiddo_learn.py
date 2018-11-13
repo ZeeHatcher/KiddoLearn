@@ -233,11 +233,9 @@ class Profiles(tk.Frame):
         self["height"] = 300
 
         h2 = tk.Label(self, text="Profiles", font=H2)
-        # h2.grid(row=0, column=0)
         h2.pack(side="top")
 
         button_add = tk.Button(self, text="Add Profile", command=self.add_profile)
-        # button_add.grid(row=0, column=1)
         button_add.pack(side="bottom", pady=10)
 
         self.update_profiles()
@@ -267,7 +265,6 @@ class Profiles(tk.Frame):
             age = prof["age"]
 
             p = Profile(self, name)
-            # p.grid(row=row_count, column=0, columnspan=2)
             p.pack(side="top")
             self.profiles_list.append(p)
 
@@ -315,14 +312,17 @@ class ProfilesInfo(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self.grid_propagate(False)
-        self["height"] = 300
+        self["height"] = 200
 
-        self.columnconfigure(0, weight=1)
-        self.columnconfigure(1, weight=1)
+        self.pack_propagate(False)
 
         h2 = tk.Label(self, text="Info", font=H2)
-        h2.grid(row=0, column=0, columnspan=2)
+        h2.pack(side="top")
+
+        self.infos = tk.Frame(self)
+        self.infos.pack(side="top", expand=True, fill="both")
+        self.infos.columnconfigure(0, weight=1)
+        self.infos.columnconfigure(1, weight=1)
 
         self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Number Of Points", "Grade"]
 
@@ -332,13 +332,47 @@ class ProfilesInfo(tk.Frame):
 
         for info in self.info_list:
             i = self.info_list.index(info)
-            tk.Label(self, text=info).grid(row=i+1, column=0, sticky="w")
-            tk.Label(self, textvariable=self.var_list[i]).grid(row=i+1, column=1, sticky="e")
+            tk.Label(self.infos, text=info).grid(row=i, column=0, sticky="w")
+            tk.Label(self.infos, textvariable=self.var_list[i]).grid(row=i, column=1, sticky="e")
 
+        self.delete = tk.Button(self, text="Delete Profile", command=self.delete_profile)
+        self.delete.pack(side="top")
+
+    def delete_profile(self):
+        for prof in self.controller.profiles.profiles_list:
+            if prof.selected:
+                i = self.controller.profiles.profiles_list.index(prof)
+                prof.destroy()
+                self.controller.profiles.profiles_list.pop(i)
+
+                for var in self.var_list:
+                    var.set("")
+
+                f = format_txt(Application.user)
+                try:
+                    profiles = check_file(f)
+                except:
+                    create_file(f)
+                    profiles = check_file(f)
+
+                for p in profiles:
+                    if prof.name == p["name"]:
+                        profiles.pop(profiles.index(p))
+                    else:
+                        continue
+
+                with open(f, "w") as out_file:
+                    out_file.write("{}".format(profiles))
+
+                LessonMenu.profile = ""
+                
+            else:
+                continue
+        
 class AddProfileMenu(tk.Toplevel):
-    def __init__(self, parent):
+    def __init__(self, controller):
         tk.Toplevel.__init__(self)
-        self.parent = parent
+        self.controller = controller
 
         self.protocol("WM_DELETE_WINDOW", self.quit_profile)
 
@@ -424,7 +458,8 @@ class AddProfileMenu(tk.Toplevel):
         with open(f, "w") as out_file:
             out_file.write("{}".format(profiles))
 
-        self.parent.update_profiles()
+        self.controller.update_profiles()
+        self.controller.profiles_list[-1].select_profile()
         self.quit_profile()
 
     def quit_profile(self):

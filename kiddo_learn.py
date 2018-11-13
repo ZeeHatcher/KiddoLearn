@@ -319,7 +319,7 @@ class ProfilesInfo(tk.Frame):
         h2.pack(side="top")
 
         self.infos = tk.Frame(self, relief="sunken", borderwidth=2, bg="white")
-        self.infos.pack(side="top", expand=True, fill="x")
+        self.infos.pack(side="top", fill="x")
         self.infos.columnconfigure(0, weight=1)
         self.infos.columnconfigure(1, weight=1)
 
@@ -335,7 +335,7 @@ class ProfilesInfo(tk.Frame):
             tk.Label(self.infos, textvariable=self.var_list[i], bg="white").grid(row=i, column=1, sticky="e")
 
         self.delete = tk.Button(self, text="Delete Profile", command=self.delete_profile, bg=CANCEL, activebackground=CANCEL_D, state="disabled")
-        self.delete.pack(side="top")
+        self.delete.pack(side="top", pady=10)
 
     def delete_profile(self):
         for prof in self.controller.profiles.profiles_list:

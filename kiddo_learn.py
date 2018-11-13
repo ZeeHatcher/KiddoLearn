@@ -175,7 +175,7 @@ class Application(tk.Toplevel):
         logo_img = tk.PhotoImage(file=r"images\kiddo_learn.gif")
         self.logo = tk.Label(self, image=logo_img)
         self.logo.image = logo_img
-        self.logo.place(anchor="n", relx=0.5, y=25)
+        self.logo.place(anchor="n", relx=0.5, y=25, relwidth=1)
 
 class MainMenu(tk.Frame):
     def __init__(self, controller):
@@ -514,7 +514,8 @@ class LessonMenu(tk.Frame):
     def to_MainMenu(self):
         LessonMenu.profile = ""
         self.controller.active_frame = MainMenu(self.controller)
-        self.controller.active_frame.place(x=0, y=0, relwidth=1, relheight=1)
+        self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
+        self.controller.logo.lift()
         self.destroy()
 
 if __name__ == "__main__":

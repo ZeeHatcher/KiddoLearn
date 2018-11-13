@@ -184,7 +184,7 @@ class MainMenu(tk.Frame):
         h1.pack(side="top", pady=10)
 
         content = tk.Frame(frame)
-        content.pack(side="top", expand=True, fill="both")
+        content.pack(side="top", expand=True, fill="both", padx="50")
         content.columnconfigure(0, weight=1)
         content.columnconfigure(1, weight=1)
 
@@ -229,7 +229,7 @@ class Profiles(tk.Frame):
 
         self.profiles_list = []
 
-        self.grid_propagate(False)
+        self.pack_propagate(False)
         self["height"] = 300
 
         h2 = tk.Label(self, text="Profiles", font=H2)
@@ -312,15 +312,14 @@ class ProfilesInfo(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.controller = controller
 
-        self["height"] = 200
-
         self.pack_propagate(False)
+        self["height"] = 300
 
         h2 = tk.Label(self, text="Info", font=H2)
         h2.pack(side="top")
 
-        self.infos = tk.Frame(self)
-        self.infos.pack(side="top", expand=True, fill="both")
+        self.infos = tk.Frame(self, relief="sunken", borderwidth=2, bg="white")
+        self.infos.pack(side="top", expand=True, fill="x")
         self.infos.columnconfigure(0, weight=1)
         self.infos.columnconfigure(1, weight=1)
 
@@ -332,10 +331,10 @@ class ProfilesInfo(tk.Frame):
 
         for info in self.info_list:
             i = self.info_list.index(info)
-            tk.Label(self.infos, text=info).grid(row=i, column=0, sticky="w")
-            tk.Label(self.infos, textvariable=self.var_list[i]).grid(row=i, column=1, sticky="e")
+            tk.Label(self.infos, text=info, bg="white").grid(row=i, column=0, sticky="w")
+            tk.Label(self.infos, textvariable=self.var_list[i], bg="white").grid(row=i, column=1, sticky="e")
 
-        self.delete = tk.Button(self, text="Delete Profile", command=self.delete_profile)
+        self.delete = tk.Button(self, text="Delete Profile", command=self.delete_profile, bg=CANCEL, activebackground=CANCEL_D, state="disabled")
         self.delete.pack(side="top")
 
     def delete_profile(self):

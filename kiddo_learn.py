@@ -244,7 +244,7 @@ class Profiles(tk.Frame):
         buttons = tk.Frame(self)
         buttons.pack(side="top", pady=10)
 
-        self.button_add = tk.Button(buttons, text="Add Profile", command=self.add_profile)
+        self.button_add = tk.Button(buttons, text="Add Profile", command=self.add_profile, bg=SUBMIT, activebackground=SUBMIT_D)
         self.button_add.pack(side="left", padx=10)
 
         self.button_delete = tk.Button(buttons, text="Delete Profile", command=self.delete_profile, bg=CANCEL, activebackground=CANCEL_D, state="disabled")

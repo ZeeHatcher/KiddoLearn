@@ -1,5 +1,5 @@
 import tkinter as tk
-from modules.login import *
+from modules.fileio import *
 from modules.lesson import *
 
 # Constants for color, size, fonts, etc.
@@ -60,8 +60,18 @@ class LoginMenu(tk.Toplevel):
         button_create.pack(side="top", pady=2)
 
     def check_login(self):
-        authorized = login(self.entry_username, self.entry_password)
+        existing_accounts = check_file(accounts)
+
         username = self.entry_username.get()
+        password = self.entry_password.get()
+
+        for account in existing_accounts:
+            if username == account["username"] and password == account["password"]:
+                authorized = True
+                break
+            else:
+                authorized = False
+                continue
 
         if authorized:
             self.destroy()
@@ -154,7 +164,14 @@ class CreateAccountMenu(tk.Toplevel):
         if create:
             f = format_txt(username)
             create_file(f)
-            create_account(username, password)
+
+            new_account = {"username": username, "password": password}
+            existing_accounts = check_file(accounts)
+            existing_accounts.append(new_account)
+
+            with open(accounts, "w") as out_file:
+                out_file.write("{}".format(existing_accounts))
+
             self.to_LoginMenu()
 
     def to_LoginMenu(self):
@@ -162,7 +179,7 @@ class CreateAccountMenu(tk.Toplevel):
         LoginMenu()
 
 class Application(tk.Toplevel):
-    user = ""
+    user = None
     def __init__(self):
         tk.Toplevel.__init__(self)
         self.title("Kiddo Learn")
@@ -199,6 +216,10 @@ class MainMenu(tk.Frame):
         self.profiles = Profiles(content, self)
         self.profiles.grid(row=0, column=0, sticky="nsew", padx=10)
 
+        self.message_var = tk.StringVar()
+        message = tk.Label(frame, textvariable=self.message_var)
+        message.pack(side="top")
+
         buttons = tk.Frame(frame)
         buttons.pack(side="top")
 
@@ -212,19 +233,19 @@ class MainMenu(tk.Frame):
         button_logout.pack(side="left")
 
     def to_LoginMenu(self):
-        LessonMenu.profile = ""
-        Application.user = ""
+        LessonMenu.profile = None
+        Application.user = None
         self.controller.destroy()
         LoginMenu()
 
     def to_LessonMenu(self):
-        if LessonMenu.profile != "":
+        if LessonMenu.profile != None:
             self.controller.active_frame = LessonMenu(self.controller)
             self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
             self.controller.logo.lift()
             self.destroy()
         else:
-            print("Please select a profile before proceeding.")
+            self.message_var.set("Please select a profile before proceeding.")
 
 class Profiles(tk.Frame):
     adding_profile = False
@@ -310,7 +331,7 @@ class Profiles(tk.Frame):
                 with open(f, "w") as out_file:
                     out_file.write("{}".format(profiles))
 
-                LessonMenu.profile = ""
+                LessonMenu.profile = None
 
             else:
                 continue
@@ -483,7 +504,9 @@ class AddProfileMenu(tk.Toplevel):
         self.destroy()
 
 class LessonMenu(tk.Frame):
-    profile = ""
+    profile = None
+    mode = None
+
     def __init__(self, controller):
         tk.Frame.__init__(self, controller)
         self.controller = controller
@@ -512,7 +535,8 @@ class LessonMenu(tk.Frame):
                 LessonMenuButton(lessons, self, l).grid(row=1, column=int(i-(len(lessons_list) / 2)))
 
     def to_MainMenu(self):
-        LessonMenu.profile = ""
+        LessonMenu.profile = None
+        LessonMenu.mode = None
         self.controller.active_frame = MainMenu(self.controller)
         self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
         self.controller.logo.lift()
@@ -523,10 +547,10 @@ if __name__ == "__main__":
     root.withdraw()
 
     try:
-        check_file(r"data\accounts.txt")
+        check_file(accounts)
         LoginMenu()
     except:
-        create_file(r"data\accounts.txt")
+        create_file(accounts)
         CreateAccountMenu()
 
     root.mainloop()

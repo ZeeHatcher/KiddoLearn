@@ -1,4 +1,5 @@
 import tkinter as tk
+import math
 
 # Constants for color, size, fonts, etc.
 SUBMIT = "#81ff42"
@@ -13,7 +14,7 @@ H2 = "Verdana 12 bold"
 MEDIUM = "400x400+500+250"
 LARGE = "800x600+250+250"
 
-dict_lesson = {"alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+lesson_items = {"alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
                "numbers": tuple("0123456789"),
                "food": ("Noodle", "Rice", "Chicken", "Fish", "Vegetable", "Fruit"),
                "animals": ("Dog", "Cat", "Tiger", "Bird", "Fish", "Butterfly"),
@@ -31,26 +32,24 @@ class LessonMenuButton(tk.Button):
         self["height"] = int(self["width"] / 2)
 
     def to_Lesson(self):
-        Lesson(self.controller.controller, self.lesson).place(relwidth=1, relheight=1)
+        Lesson.lesson = self.lesson
+        Lesson(self.controller.controller).place(relwidth=1, relheight=1)
 
 class Lesson(tk.Frame):
-    def __init__(self, controller, lesson):
+    lesson = None
+    def __init__(self, controller):
         tk.Frame.__init__(self, controller)
-        self.lesson = lesson
 
-        h1 = tk.Label(self, text="Lesson")
+        h1 = tk.Label(self, text="Lesson", font=H1)
         h1.pack(side="top")
 
-        back = tk.Button(self, text="Return To Lesson Menu", command=self.back)
-        back.pack(side="top")
-
-        lesson_select = LessonSelect(self, dict_lesson[lesson])
+        lesson_select = LessonSelectItem(self, lesson_items[Lesson.lesson])
         lesson_select.pack(side="top")
 
     def back(self):
         self.destroy()
 
-class LessonSelect(tk.Frame):
+class LessonSelectItem(tk.Frame):
     def __init__(self, controller, lesson):
         tk.Frame.__init__(self, controller)
         self.lesson = lesson
@@ -64,17 +63,20 @@ class LessonSelect(tk.Frame):
         self.begin = tk.Button(self, text="Begin Lesson", command=self.begin_lesson)
         self.begin.pack(side="top")
 
+        back = tk.Button(self, text="Return To Lesson Menu", command=controller.back)
+        back.pack(side="top")
+
         self.lesson_select_buttons = []
 
         i = 0
-        for r in range(int(len(self.lesson) / 5)):
-            b_r = LessonSelectRowButton(self.container, self, r)
-            b_r.grid(row=r, column=0, padx=5)
+        for r in range(int(math.ceil(len(self.lesson) / 5))):
+            b_r = LessonSelectItemRowButton(self.container, self, r)
+            b_r.grid(row=r, column=0, padx=5, pady=2)
 
             for c in range(1, 6):
                 try:
-                    b = LessonSelectButton(self.container, self, self.lesson[i])
-                    b.grid(row=r, column=c, padx=2)
+                    b = LessonSelectItemButton(self.container, self, self.lesson[i])
+                    b.grid(row=r, column=c, padx=2, pady=2)
                     self.lesson_select_buttons.append(b)
                     i += 1
                 except:
@@ -84,9 +86,12 @@ class LessonSelect(tk.Frame):
         selected = []
         for button in self.lesson_select_buttons:
             if button.selected:
-                selected.append(button.item)
+                i = self.lesson_select_buttons.index(button)
+                selected.append(i)
             else:
                 continue
+
+        print(selected)
 
     def select_all(self):
         for button in self.lesson_select_buttons:
@@ -103,7 +108,7 @@ class LessonSelect(tk.Frame):
                 button.selected = False
                 button.select_button()
 
-class LessonSelectButton(tk.Button):
+class LessonSelectItemButton(tk.Button):
     def __init__(self, parent, controller, item):
         tk.Button.__init__(self, parent, text=item, command=self.select_button)
         self["width"] = 7
@@ -120,7 +125,7 @@ class LessonSelectButton(tk.Button):
             self.selected = True
             self["bg"] = "#c4faff"
 
-class LessonSelectRowButton(tk.Button):
+class LessonSelectItemRowButton(tk.Button):
     def __init__(self, parent, controller, row):
         tk.Button.__init__(self, parent, command=self.select_row)
         self.controller = controller
@@ -131,19 +136,27 @@ class LessonSelectRowButton(tk.Button):
         row_start = self.row * 5
 
         for i in range(row_start, row_start + 5):
-            button = self.controller.lesson_select_buttons[i]
+            try:
+                button = self.controller.lesson_select_buttons[i]
 
-            if not button.selected:
-                all_selected = False
+                if not button.selected:
+                    all_selected = False
+                    break
+                else:
+                    all_selected = True
+
+            except:
                 break
-            else:
-                all_selected = True
 
         for i in range(row_start, row_start + 5):
-            button = self.controller.lesson_select_buttons[i]
+            try:
+                button = self.controller.lesson_select_buttons[i]
 
-            if all_selected:
-                button.select_button()
-            else:
-                button.selected = False
-                button.select_button()
+                if all_selected:
+                    button.select_button()
+                else:
+                    button.selected = False
+                    button.select_button()
+
+            except:
+                break

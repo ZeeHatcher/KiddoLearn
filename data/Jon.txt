@@ -1,1 +1,1 @@
-[{'stage': {'days & months': 0, 'colors': 0, 'numbers': 0, 'animals': 0, 'alphabet': 0, 'food': 0}, 'name': 'Theodore', 'age': '2', 'gender': 'Male', 'points': '0', 'completed': '0', 'grade': '~'}]
+[{'grade': '~', 'age': '2', 'stage': {'animals': 0, 'colors': 0, 'days & months': 0, 'alphabet': 0, 'numbers': 0, 'food': 0}, 'name': 'Theodore', 'gender': 'Male', 'points': '0', 'completed': '0'}]

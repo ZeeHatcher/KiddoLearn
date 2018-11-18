@@ -703,11 +703,12 @@ class Lesson(tk.Frame):
     def __init__(self, controller, items):
         tk.Frame.__init__(self, controller)
         self.items = items
+        self.index = 0
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
 
-        print(self.items)
+        Learn(frame, self).pack(side="top", expand=True, fill="both")
 
 if __name__ == "__main__":
     root = tk.Tk()

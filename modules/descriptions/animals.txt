@@ -1,0 +1,10 @@
+{"item": "Dog", "description": "Dog", "examples": "dog.gif"}
+{"item": "Cat", "description": "Cat", "examples": "cat.gif"}
+{"item": "Bird", "description": "Bird", "examples": "bird.gif"}
+{"item": "Fish", "description": "Fish", "examples": "fish.gif"}
+{"item": "Lion", "description": "Lion", "examples": "lion.gif"}
+{"item": "Tiger", "description": "Tiger", "examples": "tiger.gif"}
+{"item": "Elephant", "description": "Elephant", "examples": "elephant.gif"}
+{"item": "Monkey", "description": "Monkey", "examples": "monkey.gif"}
+{"item": "Horse", "description": "Horse", "examples": "horse.gif"}
+{"item": "Mouse", "description": "Mouse", "examples": "mouse.gif"}

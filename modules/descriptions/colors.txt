@@ -1,0 +1,10 @@
+{"item": "Blue", "description": "Blue", "examples": "blue.gif"}
+{"item": "Red", "description": "Red", "examples": "red.gif"}
+{"item": "Purple", "description": "Purple", "examples": "purple.gif"}
+{"item": "Yellow", "description": "Yellow", "examples": "yellow.gif"}
+{"item": "Grey", "description": "Grey", "examples": "grey.gif"}
+{"item": "Orange", "description": "Orange", "examples": "orange.gif"}
+{"item": "Green", "description": "Green", "examples": "green.gif"}
+{"item": "White", "description": "White", "examples": "white.gif"}
+{"item": "Black", "description": "Black", "examples": "black.gif"}
+{"item": "Brown", "description": "Brown", "examples": "brown.gif"}

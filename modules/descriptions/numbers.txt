@@ -1,0 +1,10 @@
+{"item": "1", "description": "1 one", "examples": "1 circle"}
+{"item": "2", "description": "2 two", "examples": "2 circles"}
+{"item": "3", "description": "3 three", "examples": "3 circles"}
+{"item": "4", "description": "4 four", "examples": "4 circles"}
+{"item": "5", "description": "5 five", "examples": "5 circles"}
+{"item": "6", "description": "6 six", "examples": "6 circles"}
+{"item": "7", "description": "7 seven", "examples": "7 circles"}
+{"item": "8", "description": "8 eight", "examples": "8 circles"}
+{"item": "9", "description": "9 nine", "examples": "9 circles"}
+{"item": "10", "description": "10 ten", "examples": "10 circles"}

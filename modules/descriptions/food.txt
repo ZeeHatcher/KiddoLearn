@@ -1,0 +1,5 @@
+{"item": "Fruits", "description": "Fruits", "examples": ["fruits1.gif", "fruits2.gif", "fruits3.gif", "fruits4.gif", "fruits5.gif"]}
+{"item": "Vegetables", "description": "Vegetables", "examples": ["vege1.gif", "vege2.gif", "vege3.gif", "vege4.gif", "vege5.gif"]}
+{"item": "Meat", "description": "Meat", "examples": ["meat1.gif", "meat2.gif", "meat3.gif", "meat4.gif", "meat5.gif"]}
+{"item": "Dairy", "description": "Dairy", "examples": ["dairy1.gif", "dairy2.gif", "dairy3.gif", "dairy4.gif", "dairy5.gif"]}
+{"item": "Grains", "description": "Grains", "examples": ["grains1.gif", "grains2.gif", "grains3.gif", "grains4.gif", "grains5.gif"]}

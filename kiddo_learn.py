@@ -508,7 +508,6 @@ class AddProfileMenu(tk.Toplevel):
 
 class LessonMenu(tk.Frame):
     profile = None
-    test = False
 
     def __init__(self, controller):
         tk.Frame.__init__(self, controller)
@@ -524,7 +523,7 @@ class LessonMenu(tk.Frame):
         lessons = tk.Frame(frame)
         lessons.pack(side="top", pady=10)
 
-        back = tk.Button(frame, text="Return To Main Menu", command=self.to_MainMenu)
+        back = tk.Button(frame, text="Return To Main Menu", command=self.to_MainMenu, bg=CANCEL, activebackground=CANCEL_D)
         back.pack(side="top", pady=10)
 
         lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
@@ -563,13 +562,14 @@ class SelectMenu(tk.Frame):
     lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
                     "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
                     "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
-                    "Animals": ("Dog", "Cat", "Bird", "Fish", "Lion", "Tiger", "Elephant", "Monkey", "Horse", "Mouse"),
+                    "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
                     "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
                     "Days & Months": ("Days", "Months")}
 
     def __init__(self, controller, lesson):
         tk.Frame.__init__(self, controller)
         self.items = SelectMenu.lesson_items[lesson]
+        self.lesson = lesson
         self.controller = controller
 
         frame = tk.Frame(self)
@@ -584,10 +584,10 @@ class SelectMenu(tk.Frame):
         controls = tk.Frame(frame)
         controls.pack(side="top", pady=10)
 
-        self.begin = tk.Button(controls, text="Begin", command=self.begin_lesson, width=20, bg=SUBMIT, activebackground=SUBMIT_D)
+        self.begin = tk.Button(controls, text="Begin", command=self.begin_lesson, width=20, bg=SUBMIT, activebackground=SUBMIT_D, state="disabled")
         self.begin.pack(side="top", pady=2)
 
-        back = tk.Button(controls, text="Return To Lesson Menu", command=self.back, width=20)
+        back = tk.Button(controls, text="Return To Lesson Menu", command=self.back, width=20, bg=CANCEL, activebackground=CANCEL_D)
         back.pack(side="top", pady=2)
 
         self.lesson_select_buttons = []
@@ -618,6 +618,7 @@ class SelectMenu(tk.Frame):
             else:
                 continue
 
+        Lesson.lesson = self.lesson
         self.controller.active_frame = Lesson(self.controller, selected)
         self.controller.active_frame.place(relwidth=1, relheight=1)
         self.destroy()
@@ -637,7 +638,18 @@ class SelectMenu(tk.Frame):
                 button.selected = False
                 button.select_button()
 
+        self.check_selected()
+
+    def check_selected(self):
+        for button in self.lesson_select_buttons:
+            if button.selected:
+                self.begin["state"] = "normal"
+                break
+            else:
+                self.begin["state"] = "disabled"
+
     def back(self):
+        Lesson.lesson = None
         self.controller.active_frame = LessonMenu(self.controller)
         self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
         self.controller.logo.lift()
@@ -646,6 +658,7 @@ class SelectMenu(tk.Frame):
 class SelectMenuButton(tk.Button):
     def __init__(self, parent, controller, item):
         tk.Button.__init__(self, parent, text=item, command=self.select_button)
+        self.controller = controller
         self["width"] = 7
         self["height"] = int(self["width"] / 2)
         self.item = item
@@ -659,6 +672,8 @@ class SelectMenuButton(tk.Button):
         else:
             self.selected = True
             self["bg"] = "#c4faff"
+
+        self.controller.check_selected()
 
 class SelectMenuButtonRow(tk.Button):
     def __init__(self, parent, controller, row):
@@ -698,17 +713,29 @@ class SelectMenuButtonRow(tk.Button):
             except:
                 break
 
+        self.controller.check_selected()
+
 class Lesson(tk.Frame):
     lesson = None
     def __init__(self, controller, items):
         tk.Frame.__init__(self, controller)
+        self.controller = controller
         self.items = items
-        self.index = 0
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
 
         Learn(frame, self).pack(side="top", expand=True, fill="both")
+
+        back = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
+        back.pack(side="bottom")
+
+    def back(self):
+        Lesson.lesson = None
+        self.controller.active_frame = LessonMenu(self.controller)
+        self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
+        self.controller.logo.lift()
+        self.destroy()
 
 if __name__ == "__main__":
     root = tk.Tk()

@@ -72,11 +72,19 @@ class Learn(tk.Frame):
 
                 tk.Label(self.frame, text=desc, font=DESC).pack(side="top")
 
-                if ".gif" in ex:
-                    ExampleGIF(self.frame, self, ex).pack(side="top")
-                else:
-                    tk.Label(self.frame, text=ex).pack(side="top")
+                if self.controller.lesson == "Food" or self.controller.lesson == "Days & Months":
+                    for x in ex:
+                        if ".gif" in x:
+                            ExampleGIF(self.frame, self, x).pack(side="left")
+                        else:
+                            tk.Label(self.frame, text=x).pack(side="top")
 
+                else:
+                    if ".gif" in ex:
+                        ExampleGIF(self.frame, self, ex).pack(side="top")
+
+                    else:
+                        tk.Label(self.frame, text=ex).pack(side="top")
 
 class ExampleGIF(tk.Frame):
     def __init__(self, parent, controller, gif):

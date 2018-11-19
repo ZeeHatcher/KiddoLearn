@@ -20,7 +20,7 @@ def format_gif(folder, gif):
     return f
 
 def check_description(lesson):
-    desc_file = "modules\\descriptions\\" + lesson + ".txt"
+    desc_file = "modules\\lesson\\" + lesson + ".txt"
 
     with open(desc_file, "r") as f:
         cont = f.readlines()
@@ -31,3 +31,16 @@ def check_description(lesson):
             descriptions.append(desc)
 
     return descriptions
+
+def check_exercise(lesson):
+    ex_file = "modules\\exercise\\" + lesson + ".txt"
+
+    with open(ex_file, "r") as f:
+        cont = f.readlines()
+        exercises = []
+
+        for line in cont:
+            ex = eval(line)
+            exercises.append(ex)
+
+    return exercises

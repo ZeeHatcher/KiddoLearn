@@ -1,0 +1,1 @@
+{"1": {'Dolphin': 'dolphin.gif', 'Bear': 'bear.gif', 'Horse': 'horse.gif', 'Monkey': 'monkey.gif', 'Cat': 'cat.gif', 'Cow': 'cow.gif', 'Lion': 'lion.gif', 'Penguin': 'penguin.gif', 'Dog': 'dog.gif', 'Tiger': 'tiger.gif'}}

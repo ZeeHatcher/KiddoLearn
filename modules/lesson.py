@@ -164,7 +164,6 @@ class LearnDaysMonths(tk.Frame):
             tk.Label(items, text=str(i+1)).grid(row=i, column=0, sticky="e")
             tk.Label(items, text=ex).grid(row=i, column=1, sticky="w")
 
-
 class ExampleGIF(tk.Frame):
     def __init__(self, parent, controller, gif):
         tk.Frame.__init__(self, parent, controller)
@@ -174,7 +173,3 @@ class ExampleGIF(tk.Frame):
         img = tk.Label(self, image=gif_img)
         img.image = gif_img
         img.pack()
-
-class Exercise(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)

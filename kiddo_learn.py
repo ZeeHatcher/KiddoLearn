@@ -717,10 +717,12 @@ class SelectMenuButtonRow(tk.Button):
 
 class Lesson(tk.Frame):
     lesson = None
+    learn = {"Alphabet": LearnAlphabet, "Numbers": LearnNumbers, "Food": LearnFood, "Animals": LearnAnimals, "Colors": LearnColors, "Days & Months": LearnDaysMonths}
     def __init__(self, controller, items):
         tk.Frame.__init__(self, controller)
         self.controller = controller
         self.items = items
+        self.lrn = self.learn[self.lesson]
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)

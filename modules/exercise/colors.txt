@@ -1,1 +1,1 @@
-{"1": {'Blue': 'blue.gif', 'Black': 'black.gif', 'Orange': 'orange.gif', 'Red': 'red.gif', 'Grey': 'grey.gif', 'Green': 'green.gif', 'Yellow': 'yellow.gif', 'Brown': 'brown.gif', 'White': 'white.gif', 'Purple': 'purple.gif'}}
+{"1": {'black.gif': 'Black', 'white.gif': 'White', 'green.gif': 'Green', 'red.gif': 'Red', 'purple.gif': 'Purple', 'grey.gif': 'Grey', 'blue.gif': 'Blue', 'orange.gif': 'Orange', 'yellow.gif': 'Yellow', 'brown.gif': 'Brown'}}

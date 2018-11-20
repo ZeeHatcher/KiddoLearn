@@ -772,7 +772,7 @@ class Exercise(tk.Frame):
         Ex(frame, self).pack(side="top", expand=True, fill="both")
 
         back = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
-        back.pack(side="bottom")
+        back.pack(side="bottom", pady=10)
 
     def back(self):
         Lesson.lesson = None

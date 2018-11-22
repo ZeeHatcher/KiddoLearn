@@ -2,7 +2,7 @@ import tkinter as tk
 from fileio import *
 from lesson import *
 from exercise import *
-from menus import *
+from widgets import *
 
 # Constants for color, size, fonts, etc.
 SUBMIT = "#81ff42"
@@ -255,8 +255,6 @@ class MainMenu(tk.Frame):
         self.to_LessonMenu()
 
 class Profiles(tk.Frame):
-    adding_profile = False
-
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
@@ -283,8 +281,8 @@ class Profiles(tk.Frame):
         self.update_profiles()
 
     def add_profile(self):
-        if Profiles.adding_profile == False:
-            Profiles.adding_profile = True
+        if AddProfileMenu.adding_profile == False:
+            AddProfileMenu.adding_profile = True
             AddProfileMenu(self)
 
     def update_profiles(self):
@@ -418,6 +416,7 @@ class ProfilesInfo(tk.Frame):
             tk.Label(self.infos, textvariable=self.var_list[i], bg="white").grid(row=i, column=1, sticky="e")
 
 class AddProfileMenu(tk.Toplevel):
+    adding_profile = False
     def __init__(self, controller):
         tk.Toplevel.__init__(self)
         self.controller = controller
@@ -511,7 +510,7 @@ class AddProfileMenu(tk.Toplevel):
         self.quit_profile()
 
     def quit_profile(self):
-        Profiles.adding_profile = False
+        AddProfileMenu.adding_profile = False
         self.destroy()
 
 class LessonMenu(tk.Frame):

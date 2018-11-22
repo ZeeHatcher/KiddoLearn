@@ -293,29 +293,14 @@ class LessonMenu(tk.Frame):
         self.controller.logo.lift()
         self.destroy()
 
-class LessonMenuButton(tk.Button):
-    def __init__(self, parent, controller, lesson):
-        tk.Button.__init__(self, parent, text=lesson, command=self.check_mode)
-        self.lesson = lesson
-        self.parent = parent
-        self.controller = controller
-        self["width"] = 15
-        self["height"] = int(self["width"] / 2)
+    def to_Menu(self, menu, ls):
+        if menu == 0:
+            self.controller.active_frame = SelectMenu(self.controller, ls)
 
-    def check_mode(self):
-        if LessonMenu.test:
-            self.to_Exercise()
-        else:
-            self.to_SelectMenu()
+        elif menu == 1:
+            Exercise.lesson = ls
+            self.controller.active_frame = Exercise(self.controller)
 
-    def to_SelectMenu(self):
-        self.controller.active_frame = SelectMenu(self.controller.controller, self.lesson)
-        self.controller.active_frame.place(relwidth=1, relheight=1)
-        self.destroy()
-
-    def to_Exercise(self):
-        Exercise.lesson = self.lesson
-        self.controller.active_frame = Exercise(self.controller.controller)
         self.controller.active_frame.place(relwidth=1, relheight=1)
         self.destroy()
 

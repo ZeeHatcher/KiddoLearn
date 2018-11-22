@@ -279,6 +279,21 @@ class AddProfileMenu(tk.Toplevel):
         AddProfileMenu.adding_profile = False
         self.destroy()
 
+class LessonMenuButton(tk.Button):
+    def __init__(self, parent, controller, lesson):
+        tk.Button.__init__(self, parent, text=lesson, command=self.check_mode)
+        self.lesson = lesson
+        self.parent = parent
+        self.controller = controller
+        self["width"] = 15
+        self["height"] = int(self["width"] / 2)
+
+    def check_mode(self):
+        if self.controller.test:
+            self.controller.to_Menu(1, self.lesson)
+        else:
+            self.controller.to_Menu(0, self.lesson)
+
 class SelectMenuButton(tk.Button):
     def __init__(self, parent, controller, item):
         tk.Button.__init__(self, parent, text=item, command=self.select_button)

@@ -2,6 +2,7 @@ import tkinter as tk
 from fileio import *
 from lesson import *
 from exercise import *
+from menus import *
 
 # Constants for color, size, fonts, etc.
 SUBMIT = "#81ff42"
@@ -189,7 +190,9 @@ class Application(tk.Toplevel):
         self.geometry(LARGE)
         self.resizable(False, False)
 
-        self.active_frame = MainMenu(self)
+        self.frames = (MainMenu, LessonMenu, SelectMenu, Lesson, Exercise)
+
+        self.active_frame = self.frames[0](self)
         self.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
 
         logo_img = tk.PhotoImage(file=r"images\kiddo_learn.gif")
@@ -673,66 +676,6 @@ class SelectMenu(tk.Frame):
         self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
         self.controller.logo.lift()
         self.destroy()
-
-class SelectMenuButton(tk.Button):
-    def __init__(self, parent, controller, item):
-        tk.Button.__init__(self, parent, text=item, command=self.select_button)
-        self.controller = controller
-        self["width"] = 7
-        self["height"] = int(self["width"] / 2)
-        self.item = item
-
-        self.selected = False
-
-    def select_button(self):
-        if self.selected:
-            self.selected = False
-            self["bg"] = "#f0f0f0"
-        else:
-            self.selected = True
-            self["bg"] = "#c4faff"
-
-        self.controller.check_selected()
-
-class SelectMenuButtonRow(tk.Button):
-    def __init__(self, parent, controller, row):
-        tk.Button.__init__(self, parent, command=self.select_row)
-        self.controller = controller
-        self.row = row
-        self["height"] = 3
-        self["bg"] = SPECIAL
-        self["activebackground"] = SPECIAL_D
-
-    def select_row(self):
-        row_start = self.row * 5
-
-        for i in range(row_start, row_start + 5):
-            try:
-                button = self.controller.lesson_select_buttons[i]
-
-                if not button.selected:
-                    all_selected = False
-                    break
-                else:
-                    all_selected = True
-
-            except:
-                break
-
-        for i in range(row_start, row_start + 5):
-            try:
-                button = self.controller.lesson_select_buttons[i]
-
-                if all_selected:
-                    button.select_button()
-                else:
-                    button.selected = False
-                    button.select_button()
-
-            except:
-                break
-
-        self.controller.check_selected()
 
 class Lesson(tk.Frame):
     lesson = None

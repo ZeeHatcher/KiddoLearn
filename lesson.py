@@ -1,5 +1,5 @@
 import tkinter as tk
-from modules.fileio import *
+from fileio import *
 import math
 
 # Constants for color, size, fonts, etc.

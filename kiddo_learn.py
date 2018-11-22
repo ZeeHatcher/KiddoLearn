@@ -1,7 +1,7 @@
 import tkinter as tk
-from modules.fileio import *
-from modules.lesson import *
-from modules.exercise import *
+from fileio import *
+from lesson import *
+from exercise import *
 
 # Constants for color, size, fonts, etc.
 SUBMIT = "#81ff42"

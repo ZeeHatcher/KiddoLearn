@@ -1,6 +1,6 @@
 import tkinter as tk
 import random
-from modules.fileio import *
+from fileio import *
 
 # Constants for color, size, fonts, etc.
 SUBMIT = "#81ff42"

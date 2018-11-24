@@ -1,2 +1,0 @@
-{'grade': '~', 'completed': '0', 'gender': 'Male', 'name': 'Theresa', 'age': '2'}
-{'grade': '~', 'completed': '0', 'gender': 'Male', 'name': 'Christiano', 'age': '3'}

@@ -117,7 +117,7 @@ class Profile(tk.Button):
                 self.info.var_list[0].set(prof["name"])
                 self.info.var_list[1].set(prof["age"])
                 self.info.var_list[2].set(prof["gender"])
-                self.info.var_list[3].set(prof["completed"])
+                self.info.var_list[3].set(prof["completed"] + "/6")
                 self.info.var_list[4].set(prof["grade"])
             else:
                 continue
@@ -237,6 +237,12 @@ class AddProfileMenu(tk.Toplevel):
                 "gender": self.gender_var.get(),
                 "completed": "0",
                 "grade": "~",
+                "items": {"Alphabet": "",
+                          "Numbers": "",
+                          "Food": "",
+                          "Animals": "",
+                          "Colors": "",
+                          "Days & Months": ""}
                 }
 
         with open(f, "a") as out_file:

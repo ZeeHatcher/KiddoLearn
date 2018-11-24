@@ -85,12 +85,12 @@ class Learn(tk.Frame):
 
         for prof in profiles:
             if self.controller.profile == prof["name"]:
-                prof["items"][self.controller.lesson] = completed
+                for i in completed:
+                    if not i in prof["items"][self.controller.lesson]:
+                        prof["items"][self.controller.lesson].append(i)
                 break
             else:
                 continue
-
-        print(profiles)
 
         with open(f, "w") as out_file:
             for prof in profiles:

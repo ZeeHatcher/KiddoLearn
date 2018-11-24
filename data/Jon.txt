@@ -1,2 +1,0 @@
-{'grade': '~', 'age': '2', 'completed': '0', 'gender': 'Male', 'items': {'Days & Months': [], 'Numbers': [], 'Alphabet': [], 'Colors': [], 'Animals': [], 'Food': []}, 'name': 'Jon'}
-{'grade': '~', 'age': '1', 'completed': '0', 'gender': 'Female', 'items': {'Days & Months': [], 'Numbers': [0, 9], 'Alphabet': [], 'Colors': [], 'Animals': [], 'Food': []}, 'name': 'Tet'}

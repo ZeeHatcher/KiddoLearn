@@ -19,9 +19,19 @@ H2 = "Verdana 12 bold"
 MEDIUM = "500x500+500+250"
 LARGE = "800x600+250+250"
 
-class LoginMenu(tk.Toplevel):
+class Root(tk.Tk):
     def __init__(self):
+        tk.Tk.__init__(self)
+
+    def shutdown(self):
+        self.destroy()
+
+class LoginMenu(tk.Toplevel):
+    def __init__(self, root):
         tk.Toplevel.__init__(self)
+        self.root = root
+
+        self.protocol("WM_DELETE_WINDOW", self.root.shutdown)
 
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
@@ -80,17 +90,20 @@ class LoginMenu(tk.Toplevel):
         if authorized:
             self.destroy()
             Application.user = username
-            Application()
+            Application(self.root)
         else:
             self.message_var.set("Invalid username and/or password")
 
     def to_CreateAccountMenu(self):
         self.destroy()
-        CreateAccountMenu()
+        CreateAccountMenu(self.root)
 
 class CreateAccountMenu(tk.Toplevel):
-    def __init__(self):
+    def __init__(self, root):
         tk.Toplevel.__init__(self)
+        self.root = root
+
+        self.protocol("WM_DELETE_WINDOW", self.root.shutdown)
 
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
@@ -180,15 +193,18 @@ class CreateAccountMenu(tk.Toplevel):
 
     def to_LoginMenu(self):
         self.destroy()
-        LoginMenu()
+        LoginMenu(self.root)
 
 class Application(tk.Toplevel):
     user = None
-    def __init__(self):
+    def __init__(self, root):
         tk.Toplevel.__init__(self)
+        self.root = root
         self.title("Kiddo Learn")
         self.geometry(LARGE)
         self.resizable(False, False)
+
+        self.protocol("WM_DELETE_WINDOW", self.root.shutdown)
 
         self.frames = (MainMenu, LessonMenu, SelectMenu, Lesson, Exercise)
 
@@ -238,7 +254,7 @@ class MainMenu(tk.Frame):
         LessonMenu.profile = None
         Application.user = None
         self.controller.destroy()
-        LoginMenu()
+        LoginMenu(self.controller.root)
 
     def to_LessonMenu(self, mode):
         if mode == 0:
@@ -450,14 +466,14 @@ class Exercise(tk.Frame):
         self.destroy()
 
 if __name__ == "__main__":
-    root = tk.Tk()
+    root = Root()
     root.withdraw()
 
     try:
         check_file(accounts)
-        LoginMenu()
+        LoginMenu(root)
     except:
         create_file(accounts)
-        CreateAccountMenu()
+        CreateAccountMenu(root)
 
     root.mainloop()

@@ -4,34 +4,20 @@ from lesson import *
 from exercise import *
 from widgets import *
 
-# Constants for color, size, fonts, etc.
-SUBMIT = "#81ff42"
-SUBMIT_D = "#5fc12e"
-MISC = "#c4faff"
-MISC_D = "#99c5c9"
-SPECIAL = "#fff189"
-SPECIAL_D = "#d1c56e"
-CANCEL = "#ff7663"
-CANCEL_D= "#c65c4d"
-H1 = "Verdana 16 bold"
-H2 = "Verdana 12 bold"
-# MINI
-MEDIUM = "500x500+500+250"
-LARGE = "800x600+250+250"
-
 class Root(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
 
-    def shutdown(self):
-        self.destroy()
+    def change_window(self, old, new):
+        old.destroy()
+        new(self)
 
 class LoginMenu(tk.Toplevel):
     def __init__(self, root):
         tk.Toplevel.__init__(self)
         self.root = root
 
-        self.protocol("WM_DELETE_WINDOW", self.root.shutdown)
+        self.protocol("WM_DELETE_WINDOW", self.root.destroy)
 
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
@@ -70,7 +56,7 @@ class LoginMenu(tk.Toplevel):
         button_login = tk.Button(frame, text="Login", command=self.check_login, bg=SUBMIT, activebackground=SUBMIT_D)
         button_login.pack(side="top", pady=2)
 
-        button_create = tk.Button(frame, text="Create New Account", command=self.to_CreateAccountMenu, bg=MISC, activebackground=MISC_D)
+        button_create = tk.Button(frame, text="Create New Account", command=lambda: root.change_window(self, CreateAccountMenu), bg=MISC, activebackground=MISC_D)
         button_create.pack(side="top", pady=2)
 
     def check_login(self):
@@ -79,12 +65,13 @@ class LoginMenu(tk.Toplevel):
         username = self.entry_username.get()
         password = self.entry_password.get()
 
+        authorized = False
+
         for account in existing_accounts:
             if username == account["username"] and password == account["password"]:
                 authorized = True
                 break
             else:
-                authorized = False
                 continue
 
         if authorized:
@@ -94,16 +81,12 @@ class LoginMenu(tk.Toplevel):
         else:
             self.message_var.set("Invalid username and/or password")
 
-    def to_CreateAccountMenu(self):
-        self.destroy()
-        CreateAccountMenu(self.root)
-
 class CreateAccountMenu(tk.Toplevel):
     def __init__(self, root):
         tk.Toplevel.__init__(self)
         self.root = root
 
-        self.protocol("WM_DELETE_WINDOW", self.root.shutdown)
+        self.protocol("WM_DELETE_WINDOW", self.root.destroy)
 
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
@@ -143,7 +126,7 @@ class CreateAccountMenu(tk.Toplevel):
         button_create = tk.Button(frame, text="Confirm", command=self.check_create_account, bg=SUBMIT, activebackground=SUBMIT_D)
         button_create.pack(side="top", pady=2)
 
-        button_back = tk.Button(frame, text="Cancel", command=self.to_LoginMenu, bg=CANCEL, activebackground=CANCEL_D)
+        button_back = tk.Button(frame, text="Cancel", command=lambda: root.change_window(self, LoginMenu), bg=CANCEL, activebackground=CANCEL_D)
         button_back.pack(side="top", pady=2)
 
     def check_create_account(self):
@@ -189,11 +172,7 @@ class CreateAccountMenu(tk.Toplevel):
             with open(accounts, "w") as out_file:
                 out_file.write("{}".format(existing_accounts))
 
-            self.to_LoginMenu()
-
-    def to_LoginMenu(self):
-        self.destroy()
-        LoginMenu(self.root)
+            self.root.change_window(self, LoginMenu)
 
 class Application(tk.Toplevel):
     user = None
@@ -204,7 +183,7 @@ class Application(tk.Toplevel):
         self.geometry(LARGE)
         self.resizable(False, False)
 
-        self.protocol("WM_DELETE_WINDOW", self.root.shutdown)
+        self.protocol("WM_DELETE_WINDOW", self.root.destroy)
 
         self.frames = (MainMenu, LessonMenu, SelectMenu, Lesson, Exercise)
 
@@ -253,8 +232,7 @@ class MainMenu(tk.Frame):
     def logout(self):
         LessonMenu.profile = None
         Application.user = None
-        self.controller.destroy()
-        LoginMenu(self.controller.root)
+        self.controller.root.change_window(self.controller, LoginMenu)
 
     def to_LessonMenu(self, mode):
         if mode == 0:
@@ -266,9 +244,6 @@ class MainMenu(tk.Frame):
         self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
         self.controller.logo.lift()
         self.destroy()
-
-    def set_lesson(self, ls):
-        LessonMenu.lesson = ls
 
 class LessonMenu(tk.Frame):
     profile = None

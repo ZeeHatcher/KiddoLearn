@@ -1,20 +1,6 @@
 import tkinter as tk
-from fileio import *
 import math
-
-# Constants for color, size, fonts, etc.
-SUBMIT = "#81ff42"
-SUBMIT_D = "#5fc12e"
-MISC = "#c4faff"
-MISC_D = "#99c5c9"
-CANCEL = "#ff7663"
-CANCEL_D= "#c65c4d"
-H1 = "Verdana 16 bold"
-H2 = "Verdana 12 bold"
-DESC = "Verdana 30"
-# MINI
-MEDIUM = "400x400+500+250"
-LARGE = "800x600+250+250"
+from fileio import *
 
 class Learn(tk.Frame):
     def __init__(self, parent, controller):

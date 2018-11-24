@@ -1,21 +1,6 @@
 import tkinter as tk
 from fileio import *
 
-# Constants for color, size, fonts, etc.
-SUBMIT = "#81ff42"
-SUBMIT_D = "#5fc12e"
-MISC = "#c4faff"
-MISC_D = "#99c5c9"
-SPECIAL = "#fff189"
-SPECIAL_D = "#d1c56e"
-CANCEL = "#ff7663"
-CANCEL_D= "#c65c4d"
-H1 = "Verdana 16 bold"
-H2 = "Verdana 12 bold"
-# MINI
-MEDIUM = "500x500+500+250"
-LARGE = "800x600+250+250"
-
 class Profiles(tk.Frame):
     def __init__(self, parent, controller, user):
         tk.Frame.__init__(self, parent)
@@ -99,8 +84,6 @@ class Profiles(tk.Frame):
                 with open(f, "w") as out_file:
                     out_file.write("{}".format(profiles))
 
-                self.controller.set_lesson(None)
-
             else:
                 continue
 
@@ -121,8 +104,6 @@ class Profile(tk.Button):
         self["bg"] = "white"
 
     def select_profile(self):
-        self.controller.controller.set_lesson(self.name)
-
         f = format_txt(self.user)
         try:
             profiles = check_file(f)

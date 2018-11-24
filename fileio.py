@@ -1,5 +1,20 @@
-accounts = r"data\accounts.txt"
+# Constants for color, size, fonts, etc.
+SUBMIT = "#81ff42"
+SUBMIT_D = "#5fc12e"
+MISC = "#c4faff"
+MISC_D = "#99c5c9"
+SPECIAL = "#fff189"
+SPECIAL_D = "#d1c56e"
+CANCEL = "#ff7663"
+CANCEL_D= "#c65c4d"
+H1 = "Verdana 16 bold"
+H2 = "Verdana 12 bold"
+DESC = "Verdana 30"
+# MINI
+MEDIUM = "500x500+500+250"
+LARGE = "800x600+250+250"
 
+accounts = r"data\accounts.txt"
 
 def format_txt(name):
     f = "data\\" + name + ".txt"

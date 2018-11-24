@@ -82,7 +82,8 @@ class Profiles(tk.Frame):
                         continue
 
                 with open(f, "w") as out_file:
-                    out_file.write("{}".format(profiles))
+                    for prof in profiles:
+                        out_file.write("{}\n".format(prof))
 
             else:
                 continue
@@ -117,8 +118,7 @@ class Profile(tk.Button):
                 self.info.var_list[1].set(prof["age"])
                 self.info.var_list[2].set(prof["gender"])
                 self.info.var_list[3].set(prof["completed"])
-                self.info.var_list[4].set(prof["points"])
-                self.info.var_list[5].set(prof["grade"])
+                self.info.var_list[4].set(prof["grade"])
             else:
                 continue
 
@@ -150,7 +150,7 @@ class ProfilesInfo(tk.Frame):
         self.infos.columnconfigure(0, weight=1)
         self.infos.columnconfigure(1, weight=1)
 
-        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Number Of Points", "Grade"]
+        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Grade"]
 
         self.var_list = []
         for x in range(6):
@@ -236,21 +236,11 @@ class AddProfileMenu(tk.Toplevel):
                 "age": self.entry_age.get(),
                 "gender": self.gender_var.get(),
                 "completed": "0",
-                "points": "0",
                 "grade": "~",
-                "stage": {"alphabet": 0,
-                          "numbers": 0,
-                          "food": 0,
-                          "animals": 0,
-                          "colors": 0,
-                          "days & months": 0
-                          }
                 }
 
-        profiles.append(prof)
-
-        with open(f, "w") as out_file:
-            out_file.write("{}".format(profiles))
+        with open(f, "a") as out_file:
+            out_file.write("{}\n".format(prof))
 
         self.controller.update_profiles()
         self.controller.profiles_list[-1].select_profile()

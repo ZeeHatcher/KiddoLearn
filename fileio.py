@@ -22,11 +22,17 @@ def format_txt(name):
 
 def create_file(file_name):
     with open(file_name, "w") as new_file:
-        new_file.write("[]")
+        new_file.write("")
 
 def check_file(file_name):
     with open(file_name, "r") as pull_file:
-        f = eval(pull_file.read())
+        cont = pull_file.readlines()
+        f = []
+
+        for line in cont:
+            c = eval(line)
+            f.append(c)
+
     return f
 
 def format_gif(folder, gif):

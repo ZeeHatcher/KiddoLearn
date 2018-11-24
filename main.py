@@ -166,11 +166,9 @@ class CreateAccountMenu(tk.Toplevel):
             create_file(f)
 
             new_account = {"username": username, "password": password}
-            existing_accounts = check_file(accounts)
-            existing_accounts.append(new_account)
 
-            with open(accounts, "w") as out_file:
-                out_file.write("{}".format(existing_accounts))
+            with open(accounts, "a") as out_file:
+                out_file.write("{}\n".format(new_account))
 
             self.root.change_window(self, LoginMenu)
 

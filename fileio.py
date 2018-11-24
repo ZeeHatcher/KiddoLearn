@@ -14,6 +14,13 @@ MINI = "300x300+500+250"
 MEDIUM = "500x500+500+250"
 LARGE = "800x600+250+250"
 
+lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+                "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+                "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
+                "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
+                "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
+                "Days & Months": ("Days", "Months")}
+
 accounts = r"data\accounts.txt"
 
 def format_txt(name):

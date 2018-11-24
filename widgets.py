@@ -1,13 +1,6 @@
 import tkinter as tk
 from fileio import *
 
-lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-                "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
-                "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
-                "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
-                "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
-                "Days & Months": ("Days", "Months")}
-
 class Profiles(tk.Frame):
     def __init__(self, parent, controller, user):
         tk.Frame.__init__(self, parent)
@@ -112,6 +105,7 @@ class Profile(tk.Button):
         self["bg"] = "white"
 
     def select_profile(self):
+        lessons = list(lesson_items.keys())
         f = format_txt(self.user)
         try:
             profiles = check_file(f)
@@ -124,8 +118,14 @@ class Profile(tk.Button):
                 self.info.var_list[0].set(prof["name"])
                 self.info.var_list[1].set(prof["age"])
                 self.info.var_list[2].set(prof["gender"])
-                self.info.var_list[3].set(prof["completed"] + "/6")
                 self.info.var_list[4].set(prof["grade"])
+
+                completed = 0
+                for ls in lessons:
+                    if len(prof["items"][ls]) == len(lesson_items[ls]):
+                        completed += 1
+
+                self.info.var_list[3].set(str(completed) + "/6")
             else:
                 continue
 
@@ -247,7 +247,6 @@ class AddProfileMenu(tk.Toplevel):
         prof = {"name": self.entry_name.get(),
                 "age": self.entry_age.get(),
                 "gender": self.gender_var.get(),
-                "completed": "0",
                 "grade": "~",
                 "items": {"Alphabet": [],
                           "Numbers": [],

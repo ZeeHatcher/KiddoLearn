@@ -10,7 +10,7 @@ CANCEL_D= "#c65c4d"
 H1 = "Verdana 16 bold"
 H2 = "Verdana 12 bold"
 DESC = "Verdana 30"
-# MINI
+MINI = "300x300+500+250"
 MEDIUM = "500x500+500+250"
 LARGE = "800x600+250+250"
 

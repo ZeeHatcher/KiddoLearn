@@ -167,56 +167,60 @@ class AddProfileMenu(tk.Toplevel):
         tk.Toplevel.__init__(self)
         self.controller = controller
         self.user = user
+        self.geometry(MINI)
 
         self.protocol("WM_DELETE_WINDOW", self.quit_profile)
 
         frame = tk.Frame(self)
-        frame.pack(side="top", expand=True, fill="both")
+        frame.place(anchor="center", relx=0.5, rely=0.5)
 
         h2 = tk.Label(frame, text="Add Profile", font=H2)
-        h2.pack(side="top")
+        h2.pack(side="top", pady=10)
 
         entries = tk.Frame(frame)
         entries.pack(side="top", expand=True, fill="both")
 
-        name = tk.Label(entries, text="Name")
-        name.grid(row=0, column=0)
+        entries.columnconfigure(0, weight=1)
+        entries.columnconfigure(1, weight=1)
 
-        age = tk.Label(entries, text="Age")
-        age.grid(row=1, column=0)
+        name = tk.Label(entries, text="Name: ")
+        name.grid(row=0, column=0, sticky="e", padx=5)
 
-        gender = tk.Label(entries, text="Gender")
-        gender.grid(row=2, column=0)
+        age = tk.Label(entries, text="Age: ")
+        age.grid(row=1, column=0, sticky="e", padx=5)
+
+        gender = tk.Label(entries, text="Gender: ")
+        gender.grid(row=2, column=0, sticky="e", padx=5)
 
         self.entry_name = tk.Entry(entries)
-        self.entry_name.grid(row=0, column=1)
+        self.entry_name.grid(row=0, column=1, sticky="w", padx=5)
 
         self.entry_age = tk.Entry(entries)
-        self.entry_age.grid(row=1, column=1)
+        self.entry_age.grid(row=1, column=1, sticky="w", padx=5)
 
         self.gender_var = tk.StringVar()
 
         self.entry_gender = tk.Frame(entries)
-        self.entry_gender.grid(row=2, column=1)
+        self.entry_gender.grid(row=2, column=1, sticky="w", padx=5)
 
         self.entry_gender_m = tk.Radiobutton(self.entry_gender, text="Male", variable=self.gender_var, value="Male")
-        self.entry_gender_m.pack(side="left")
+        self.entry_gender_m.pack(side="left", padx=2)
 
         self.entry_gender_f = tk.Radiobutton(self.entry_gender, text="Female", variable=self.gender_var, value="Female")
-        self.entry_gender_f.pack(side="left")
+        self.entry_gender_f.pack(side="left", padx=2)
 
         self.message_var = tk.StringVar()
         self.message = tk.Label(entries, textvariable=self.message_var)
-        self.message.grid(row=3, column=1)
+        self.message.grid(row=3, column=0, columnspan=2)
 
         buttons = tk.Frame(frame)
-        buttons.pack(side="top")
+        buttons.pack(side="top", pady=10)
 
-        button_confirm = tk.Button(buttons, text="Confirm", command=self.check_profile)
-        button_confirm.pack(side="left")
+        button_confirm = tk.Button(buttons, text="Confirm", command=self.check_profile, bg=SUBMIT, activebackground=SUBMIT_D)
+        button_confirm.pack(side="left", padx=10)
 
-        button_cancel = tk.Button(buttons, text="Cancel", command=self.quit_profile)
-        button_cancel.pack(side="left")
+        button_cancel = tk.Button(buttons, text="Cancel", command=self.quit_profile, bg=CANCEL, activebackground=CANCEL_D)
+        button_cancel.pack(side="left", padx=10)
 
     def check_profile(self):
         if (self.entry_name.get() != "") and (self.entry_age.get() != "") and (self.gender_var.get() != ""):

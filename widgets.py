@@ -1,6 +1,13 @@
 import tkinter as tk
 from fileio import *
 
+lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+                "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+                "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
+                "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
+                "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
+                "Days & Months": ("Days", "Months")}
+
 class Profiles(tk.Frame):
     def __init__(self, parent, controller, user):
         tk.Frame.__init__(self, parent)
@@ -270,6 +277,14 @@ class LessonMenuButton(tk.Button):
         self["width"] = 15
         self["height"] = int(self["width"] / 2)
 
+        f = format_txt(self.controller.controller.user)
+        profiles = check_file(f)
+
+        if not self.controller.test:
+            for prof in profiles:
+                if self.controller.profile == prof["name"] and len(prof["items"][self.lesson]) == len(lesson_items[self.lesson]):
+                        self["bg"] = SUBMIT
+
     def check_mode(self):
         if self.controller.test:
             self.controller.to_Menu(1, self.lesson)
@@ -289,10 +304,10 @@ class SelectMenuButton(tk.Button):
     def select_button(self):
         if self.selected:
             self.selected = False
-            self["bg"] = "#f0f0f0"
+            self["relief"] = "raised"
         else:
             self.selected = True
-            self["bg"] = "#c4faff"
+            self["relief"] = "sunken"
 
         self.controller.check_selected()
 

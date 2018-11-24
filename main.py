@@ -253,7 +253,6 @@ class LessonMenu(tk.Frame):
     def __init__(self, controller):
         tk.Frame.__init__(self, controller)
         self.controller = controller
-        self.profile = ""
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
@@ -273,9 +272,11 @@ class LessonMenu(tk.Frame):
             i = lessons_list.index(l)
 
             if i < len(lessons_list) / 2:
-                LessonMenuButton(lessons, self, l).grid(row=0, column=i, pady=2, padx=2)
+                bt = LessonMenuButton(lessons, self, l)
+                bt.grid(row=0, column=i, pady=2, padx=2)
             else:
-                LessonMenuButton(lessons, self, l).grid(row=1, column=int(i-(len(lessons_list) / 2)), pady=2, padx=2)
+                bt = LessonMenuButton(lessons, self, l)
+                bt.grid(row=1, column=int(i-(len(lessons_list) / 2)), pady=2, padx=2)
 
     def to_MainMenu(self):
         LessonMenu.profile = None
@@ -337,6 +338,15 @@ class SelectMenu(tk.Frame):
                     i += 1
                 except:
                     break
+
+        f = format_txt(Application.user)
+        profiles = check_file(f)
+
+        for prof in profiles:
+            if self.profile == prof["name"]:
+                for i in prof["items"][self.lesson]:
+                    bt = self.lesson_select_buttons[i]
+                    bt["bg"] = SUBMIT
 
         self.button_select_all = tk.Button(buttons, text="Select All", command=self.select_all, width=20, bg=SPECIAL, activebackground=SPECIAL_D)
         self.button_select_all.grid(column=0, columnspan=6, pady=5)

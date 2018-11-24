@@ -2,13 +2,6 @@ import tkinter as tk
 import math
 from fileio import *
 
-lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-                "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
-                "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
-                "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
-                "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
-                "Days & Months": ("Days", "Months")}
-
 class Learn(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)

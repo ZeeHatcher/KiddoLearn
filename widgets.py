@@ -24,8 +24,8 @@ class Profiles(tk.Frame):
         self.button_delete = tk.Button(buttons, text="Delete Profile", command=self.delete_profile, bg=CANCEL, activebackground=CANCEL_D, state="disabled", width=10)
         self.button_delete.pack(side="left", padx=10)
 
-        self.profs = tk.Frame(self, relief="groove", borderwidth=1)
-        self.profs.pack(side="top", pady=10, ipadx=5, ipady=5, fill="y")
+        self.profs = tk.Frame(self, relief="groove", borderwidth=1, width=220, height=25)
+        self.profs.pack(side="top", pady=10, ipadx=5, fill="y")
         self.update_profiles()
 
     def add_profile(self):

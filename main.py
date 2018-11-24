@@ -243,6 +243,9 @@ class MainMenu(tk.Frame):
         self.controller.logo.lift()
         self.destroy()
 
+    def set_profile(self, prof):
+        LessonMenu.profile = prof
+
 class LessonMenu(tk.Frame):
     profile = None
     test = False
@@ -284,7 +287,7 @@ class LessonMenu(tk.Frame):
 
     def to_Menu(self, menu, ls):
         if menu == 0:
-            self.controller.active_frame = SelectMenu(self.controller, ls)
+            self.controller.active_frame = SelectMenu(self.controller, ls, LessonMenu.profile)
 
         elif menu == 1:
             Exercise.lesson = ls
@@ -294,18 +297,12 @@ class LessonMenu(tk.Frame):
         self.destroy()
 
 class SelectMenu(tk.Frame):
-    lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
-                    "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
-                    "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
-                    "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
-                    "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
-                    "Days & Months": ("Days", "Months")}
-
-    def __init__(self, controller, lesson):
+    def __init__(self, controller, lesson, profile):
         tk.Frame.__init__(self, controller)
-        self.items = SelectMenu.lesson_items[lesson]
+        self.items = lesson_items[lesson]
         self.lesson = lesson
         self.controller = controller
+        self.profile = profile
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.5, relwidth=1)
@@ -348,13 +345,12 @@ class SelectMenu(tk.Frame):
         selected = []
         for button in self.lesson_select_buttons:
             if button.selected:
-                # i = self.lesson_select_buttons.index(button)
                 selected.append(button.item)
             else:
                 continue
 
         Lesson.lesson = self.lesson
-        self.controller.active_frame = Lesson(self.controller, selected)
+        self.controller.active_frame = Lesson(self.controller, selected, self.profile)
         self.controller.active_frame.place(relwidth=1, relheight=1)
         self.destroy()
 
@@ -394,11 +390,12 @@ class SelectMenu(tk.Frame):
 class Lesson(tk.Frame):
     lesson = None
     learn = {"Alphabet": LearnAlphabet, "Numbers": LearnNumbers, "Food": LearnFood, "Animals": LearnAnimals, "Colors": LearnColors, "Days & Months": LearnDaysMonths}
-    def __init__(self, controller, items):
+    def __init__(self, controller, items, profile):
         tk.Frame.__init__(self, controller)
         self.controller = controller
         self.items = items
         self.lrn = self.learn[self.lesson]
+        self.profile = profile
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)

@@ -133,6 +133,7 @@ class Profile(tk.Button):
         self.selected = True
         self["bg"] = "#c4faff"
 
+        self.controller.controller.set_profile(self.name)
 
 class ProfilesInfo(tk.Frame):
     def __init__(self, parent, controller):
@@ -241,12 +242,12 @@ class AddProfileMenu(tk.Toplevel):
                 "gender": self.gender_var.get(),
                 "completed": "0",
                 "grade": "~",
-                "items": {"Alphabet": "",
-                          "Numbers": "",
-                          "Food": "",
-                          "Animals": "",
-                          "Colors": "",
-                          "Days & Months": ""}
+                "items": {"Alphabet": [],
+                          "Numbers": [],
+                          "Food": [],
+                          "Animals": [],
+                          "Colors": [],
+                          "Days & Months": []}
                 }
 
         with open(f, "a") as out_file:

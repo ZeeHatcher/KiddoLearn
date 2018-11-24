@@ -2,6 +2,13 @@ import tkinter as tk
 import math
 from fileio import *
 
+lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
+                "Numbers": ("1", "2", "3", "4", "5", "6", "7", "8", "9", "10"),
+                "Food": ("Fruits", "Vegetables", "Meat", "Dairy", "Grains"),
+                "Animals": ("Dog", "Cat", "Cow", "Dolphin", "Lion", "Tiger", "Bear", "Monkey", "Horse", "Penguin"),
+                "Colors": ("Blue", "Red", "Purple", "Yellow", "Grey", "Orange", "Green", "White", "Black", "Brown"),
+                "Days & Months": ("Days", "Months")}
+
 class Learn(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -68,7 +75,28 @@ class Learn(tk.Frame):
                 self.controller.lrn(self.frame, self, item["description"], item["examples"]).pack(side="top")
 
     def lesson_complete(self):
-        print("Lesson has ended!")
+        completed = []
+        for item in self.controller.items:
+            i = lesson_items[self.controller.lesson].index(item)
+            completed.append(i)
+
+        f = format_txt(self.controller.controller.user)
+        profiles = check_file(f)
+
+        for prof in profiles:
+            if self.controller.profile == prof["name"]:
+                prof["items"][self.controller.lesson] = completed
+                break
+            else:
+                continue
+
+        print(profiles)
+
+        with open(f, "w") as out_file:
+            for prof in profiles:
+                out_file.write("{}\n".format(prof))
+
+        self.controller.back()
 
 class LearnAlphabet(tk.Frame):
     def __init__(self, parent, controller, description, examples):

@@ -403,10 +403,10 @@ class Lesson(tk.Frame):
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
 
-        Learn(frame, self).pack(side="top", expand=True, fill="both")
+        self.end = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
+        self.end.pack(side="bottom")
 
-        back = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
-        back.pack(side="bottom")
+        Learn(frame, self).pack(side="top", expand=True, fill="both")
 
     def back(self):
         Lesson.lesson = None
@@ -426,10 +426,10 @@ class Exercise(tk.Frame):
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
 
-        Ex(frame, self).pack(side="top", expand=True, fill="both")
+        self.end = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
+        self.end.pack(side="bottom", pady=10)
 
-        back = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
-        back.pack(side="bottom", pady=10)
+        Ex(frame, self).pack(side="top", expand=True, fill="both")
 
     def back(self):
         Lesson.lesson = None

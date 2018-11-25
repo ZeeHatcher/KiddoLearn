@@ -243,36 +243,34 @@ class AddProfileMenu(tk.Toplevel):
 
     def check_profile(self):
         if (self.entry_name.get() != "") and (self.entry_age.get() != "") and (self.gender_var.get() != ""):
-            self.create_profile()
+            f = format_txt(self.user)
+            try:
+                profiles = check_file(f)
+            except:
+                create_file(f)
+                profiles = check_file(f)
+
+            prof = {"name": self.entry_name.get(),
+                    "age": self.entry_age.get(),
+                    "gender": self.gender_var.get(),
+                    "grade": "~",
+                    "items": {"Alphabet": [],
+                              "Numbers": [],
+                              "Food": [],
+                              "Animals": [],
+                              "Colors": [],
+                              "Days & Months": []}
+                    }
+
+            with open(f, "a") as out_file:
+                out_file.write("{}\n".format(prof))
+
+            self.controller.update_profiles()
+            self.controller.profiles_list[-1].select_profile()
+
+            self.quit_profile()
         else:
             self.message_var.set("Please fill in the required information")
-
-    def create_profile(self):
-        f = format_txt(self.user)
-        try:
-            profiles = check_file(f)
-        except:
-            create_file(f)
-            profiles = check_file(f)
-
-        prof = {"name": self.entry_name.get(),
-                "age": self.entry_age.get(),
-                "gender": self.gender_var.get(),
-                "grade": "~",
-                "items": {"Alphabet": [],
-                          "Numbers": [],
-                          "Food": [],
-                          "Animals": [],
-                          "Colors": [],
-                          "Days & Months": []}
-                }
-
-        with open(f, "a") as out_file:
-            out_file.write("{}\n".format(prof))
-
-        self.controller.update_profiles()
-        self.controller.profiles_list[-1].select_profile()
-        self.quit_profile()
 
     def quit_profile(self):
         AddProfileMenu.adding_profile = False
@@ -370,10 +368,106 @@ class Statistics(tk.Toplevel):
         self.geometry(MEDIUM)
         lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
 
-        print(self.profile)
         buttons = tk.Frame(self)
-        buttons.pack(side="top", fill="x")
+        buttons.pack(side="top")
 
+        self.bt_list = []
         for ls in lessons_list:
-            bt = tk.Button(buttons, text=ls, width=10)
-            bt.pack(side="left")
+            i = lessons_list.index(ls)
+            bt = StatisticsButton(buttons, self, ls)
+
+            if i < len(lessons_list) / 2:
+                bt.grid(row=0, column=i, pady=2, padx=2)
+            else:
+                bt.grid(row=1, column=int(i-(len(lessons_list) / 2)), padx=2)
+
+            self.bt_list.append(bt)
+
+class StatisticsButton(tk.Button):
+    def __init__(self, parent, controller, ls):
+        tk.Button.__init__(self, parent, text=ls, command=self.select_graph)
+        self["width"] = 12
+        self["bg"] = "white"
+        self.controller = controller
+        self.ls = ls
+        self.selected = False
+
+    def select_graph(self):
+        for bt in self.controller.bt_list:
+            bt.selected = False
+            bt["bg"] = "white"
+
+        self.selected = True
+        self["bg"] = MISC
+
+        try:
+            self.controller.graph.destroy()
+        except:
+            pass
+
+        self.controller.graph = Graph(self.controller, self.controller.profile, self.ls)
+        self.controller.graph.pack(side="top", pady=10)
+
+class Graph(tk.Frame):
+    def __init__(self, controller, profile, lesson):
+        tk.Frame.__init__(self, controller)
+        self.user = controller.controller.controller.controller.user
+        self.controller = controller
+        self.profile = profile
+        self.lesson = lesson
+
+        records_f = format_txt(self.user + "_records")
+        records = check_file(records_f)
+
+        results = []
+        for rec in records:
+            if rec["name"] == self.profile and rec["lesson"] == self.lesson:
+                results.append(rec["correct"])
+
+        x_change = 25
+        y_change = 15
+        min_x = 50
+        if (len(results) * x_change) < 400:
+            max_x = 350
+        else:
+            max_x = (len(results) * x_change) + min_x
+
+        min_y = 350
+        max_y = 50
+
+        scrollbar = tk.Scrollbar(self, orient="horizontal")
+        scrollbar.pack(side="bottom", fill="x")
+
+        c = tk.Canvas(self, height=400, xscrollcommand=scrollbar.set, scrollregion=(0, 0, max_x+20, 0))
+        c.pack(side="top")
+
+        scrollbar.config(command=c.xview)
+
+        fail_y = min_y - 10 * y_change
+        pass_y = min_y - 16 * y_change
+
+        c.create_rectangle(min_x, min_y, max_x, fail_y, fill="#ffbcbc")
+        c.create_rectangle(min_x, fail_y, max_x, pass_y, fill="#bcffc1")
+        c.create_rectangle(min_x, pass_y, max_x, max_y, fill="#fffdbc")
+
+        c.create_line(min_x, min_y, max_x, min_y)
+        c.create_line(min_x, min_y, min_x, max_y)
+
+        c.create_text(min_x, min_y+10, text="0")
+
+        for score in range(21):
+            y = min_y - score * y_change
+            c.create_text(min_x-10, y, text=str(score))
+
+        x1 = min_x
+        y1 = min_y
+        for i in range(len(results)):
+            x2 = x1 + x_change
+            y2 = min_y - results[i] * y_change
+
+            c.create_line(x1, y1, x2, y2)
+            c.create_oval(x2-3, y2-3, x2+3, y2+3, fill="black")
+            c.create_text(x2, min_y+10, text=str(i+1))
+
+            y1 = y2
+            x1 += x_change

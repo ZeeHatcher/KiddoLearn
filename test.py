@@ -5,15 +5,15 @@ class Graph(tk.Frame):
     def __init__(self, parent, profile, lesson):
         tk.Frame.__init__(self, parent)
         self.lesson = lesson
-        min_x = 50
-        max_x = (len(results) * 50) + min_x
+        min_x = 20
+        max_x = (len(results) * 20) + min_x
         min_y = 450
         max_y = 50
 
         scrollbar = tk.Scrollbar(self, orient="horizontal")
         scrollbar.pack(side="bottom", fill="x")
 
-        c = tk.Canvas(self, height=500, xscrollcommand=scrollbar.set, scrollregion=(0, 0, max_x+50, 0))
+        c = tk.Canvas(self, height=500, xscrollcommand=scrollbar.set, scrollregion=(0, 0, max_x+20, 0))
         c.pack(side="top")
 
         scrollbar.config(command=c.xview)
@@ -28,7 +28,7 @@ class Graph(tk.Frame):
         x1 = min_x
         y1 = min_y
         for i in range(len(results)):
-            x2 = x1 + 50
+            x2 = x1 + 20
             y2 = min_y - results[i] * 20
 
             c.create_line(x1, y1, x2, y2)
@@ -36,7 +36,7 @@ class Graph(tk.Frame):
             c.create_text(x1, min_y+10, text=str(i))
 
             y1 = y2
-            x1 += 50
+            x1 += 20
 
 if __name__ == "__main__":
     root = tk.Tk()

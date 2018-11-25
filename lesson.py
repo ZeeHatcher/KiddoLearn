@@ -2,6 +2,30 @@ import tkinter as tk
 import math
 from fileio import *
 
+class Lesson(tk.Frame):
+    lesson = None
+    def __init__(self, controller, items, profile):
+        self.learn = {"Alphabet": LearnAlphabet,
+                      "Numbers": LearnNumbers,
+                      "Food": LearnFood,
+                      "Animals": LearnAnimals,
+                      "Colors": LearnColors,
+                      "Days & Months": LearnDaysMonths}
+                      
+        tk.Frame.__init__(self, controller)
+        self.controller = controller
+        self.items = items
+        self.lrn = self.learn[self.lesson]
+        self.profile = profile
+
+        frame = tk.Frame(self)
+        frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
+
+        self.end = tk.Button(frame, text="Return To Main Menu", command=lambda: controller.back_MainMenu(self), bg=CANCEL, activebackground=CANCEL_D)
+        self.end.pack(side="bottom")
+
+        Learn(frame, self).pack(side="top", expand=True, fill="both")
+
 class Learn(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -86,7 +110,7 @@ class Learn(tk.Frame):
             for prof in profiles:
                 out_file.write("{}\n".format(prof))
 
-        self.controller.back()
+        self.controller.controller.back_MainMenu(self.controller)
 
 class LearnAlphabet(tk.Frame):
     def __init__(self, parent, controller, description, examples):

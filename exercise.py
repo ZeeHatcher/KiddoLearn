@@ -2,6 +2,29 @@ import tkinter as tk
 import random
 from fileio import *
 
+class Exercise(tk.Frame):
+    lesson = None
+    def __init__(self, controller, profile):
+        tk.Frame.__init__(self, controller)
+        self.learn = {"Alphabet": ExAlphabet,
+                      "Numbers": ExNumbers,
+                      "Food": ExFood,
+                      "Animals": ExAnimals,
+                      "Colors": ExColors,
+                      "Days & Months": ExDaysMonths}
+                      
+        self.controller = controller
+        self.lrn = self.learn[self.lesson]
+        self.profile = profile
+
+        frame = tk.Frame(self)
+        frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
+
+        self.end = tk.Button(frame, text="Return To Main Menu", command=lambda: controller.back_MainMenu(self), bg=CANCEL, activebackground=CANCEL_D)
+        self.end.pack(side="bottom", pady=10)
+
+        Ex(frame, self).pack(side="top", expand=True, fill="both")
+
 class Ex(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -391,4 +414,4 @@ class Results(tk.Frame):
             for record in records:
                 out_file.write("{}\n".format(record))
 
-        self.controller.controller.back()
+        self.controller.controller.controller.back_MainMenu(self.controller.controller)

@@ -187,6 +187,16 @@ class Application(tk.Toplevel):
         self.logo.image = logo_img
         self.logo.place(anchor="n", relx=0.5, y=25, relwidth=1)
 
+    def back_MainMenu(self, old):
+        Lesson.lesson = None
+        Exercise.lesson = None
+        LessonMenu.profile = None
+        LessonMenu.test = False
+        self.active_frame = MainMenu(self)
+        self.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
+        self.logo.lift()
+        old.destroy()
+
 class MainMenu(tk.Frame):
     def __init__(self, controller):
         tk.Frame.__init__(self, controller)
@@ -257,7 +267,7 @@ class LessonMenu(tk.Frame):
         lessons = tk.Frame(frame)
         lessons.pack(side="top", pady=10)
 
-        back = tk.Button(frame, text="Return To Main Menu", command=self.to_MainMenu, bg=CANCEL, activebackground=CANCEL_D)
+        back = tk.Button(frame, text="Return To Main Menu", command=lambda: controller.back_MainMenu(self), bg=CANCEL, activebackground=CANCEL_D)
         back.pack(side="top", pady=10)
 
         lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
@@ -271,14 +281,6 @@ class LessonMenu(tk.Frame):
             else:
                 bt = LessonMenuButton(lessons, self, l)
                 bt.grid(row=1, column=int(i-(len(lessons_list) / 2)), pady=2, padx=2)
-
-    def to_MainMenu(self):
-        LessonMenu.profile = None
-        LessonMenu.test = False
-        self.controller.active_frame = MainMenu(self.controller)
-        self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
-        self.controller.logo.lift()
-        self.destroy()
 
     def to_Menu(self, menu, ls):
         if menu == 0:
@@ -384,55 +386,6 @@ class SelectMenu(tk.Frame):
     def back(self):
         Lesson.lesson = None
         Exercise.lesson = None
-        self.controller.active_frame = LessonMenu(self.controller)
-        self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
-        self.controller.logo.lift()
-        self.destroy()
-
-class Lesson(tk.Frame):
-    lesson = None
-    learn = {"Alphabet": LearnAlphabet, "Numbers": LearnNumbers, "Food": LearnFood, "Animals": LearnAnimals, "Colors": LearnColors, "Days & Months": LearnDaysMonths}
-    def __init__(self, controller, items, profile):
-        tk.Frame.__init__(self, controller)
-        self.controller = controller
-        self.items = items
-        self.lrn = self.learn[self.lesson]
-        self.profile = profile
-
-        frame = tk.Frame(self)
-        frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
-
-        self.end = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
-        self.end.pack(side="bottom")
-
-        Learn(frame, self).pack(side="top", expand=True, fill="both")
-
-    def back(self):
-        Lesson.lesson = None
-        self.controller.active_frame = LessonMenu(self.controller)
-        self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
-        self.controller.logo.lift()
-        self.destroy()
-
-class Exercise(tk.Frame):
-    lesson = None
-    learn = {"Alphabet": ExAlphabet, "Numbers": ExNumbers, "Food": ExFood, "Animals": ExAnimals, "Colors": ExColors, "Days & Months": ExDaysMonths}
-    def __init__(self, controller, profile):
-        tk.Frame.__init__(self, controller)
-        self.controller = controller
-        self.lrn = self.learn[self.lesson]
-        self.profile = profile
-
-        frame = tk.Frame(self)
-        frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
-
-        self.end = tk.Button(frame, text="Return To Lesson Menu", command=self.back, bg=CANCEL, activebackground=CANCEL_D)
-        self.end.pack(side="bottom", pady=10)
-
-        Ex(frame, self).pack(side="top", expand=True, fill="both")
-
-    def back(self):
-        Lesson.lesson = None
         self.controller.active_frame = LessonMenu(self.controller)
         self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
         self.controller.logo.lift()

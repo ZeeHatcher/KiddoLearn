@@ -1,2 +1,0 @@
-{'password': 'pass', 'username': 'Jon'}
-{'username': 'testbot', 'password': 'pass123'}

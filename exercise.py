@@ -65,8 +65,6 @@ class ExAlphabet(tk.Frame):
         self.a_list.remove(self.a)
         col_list.remove(col)
 
-        print(self.controller.type)
-
         if self.controller.type == "3":
             for ans in a_list:
                 if ans != self.a:
@@ -326,6 +324,9 @@ class AnswerButton(tk.Button):
 class Results(tk.Frame):
     def __init__(self, parent, controller, correct_count, wrong_count):
         tk.Frame.__init__(self, parent)
+        self.controller = controller
+        self.correct_count = correct_count
+        self.wrong_count = wrong_count
 
         self.total = correct_count + wrong_count
 
@@ -352,3 +353,28 @@ class Results(tk.Frame):
 
         num_w = tk.Label(details, text=str(wrong_count))
         num_w.grid(row=2, column=1, sticky="e", padx=5, pady=2)
+
+        self.controller.controller.end.config(text="End Lesson", bg=SPECIAL, activebackground=SPECIAL_D, command=self.save_results)
+
+    def save_results(self):
+        user = self.controller.controller.controller.user
+        profile = self.controller.controller.profile
+        lesson = self.controller.controller.lesson
+
+        record_f = user + "_records"
+        f = format_txt(record_f)
+        try:
+            records = check_file(f)
+        except:
+            create_file(f)
+            records = check_file(f)
+
+        res = {"name": user, "lesson": lesson, "correct": self.correct_count}
+
+        records.append(res)
+
+        with open(f, "w") as out_file:
+            for record in records:
+                out_file.write("{}\n".format(record))
+
+        self.controller.controller.back()

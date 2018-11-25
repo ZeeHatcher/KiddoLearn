@@ -292,7 +292,7 @@ class LessonMenu(tk.Frame):
 
         elif menu == 1:
             Exercise.lesson = ls
-            self.controller.active_frame = Exercise(self.controller)
+            self.controller.active_frame = Exercise(self.controller, LessonMenu.profile)
 
         self.controller.active_frame.place(relwidth=1, relheight=1)
         self.destroy()
@@ -425,10 +425,11 @@ class Lesson(tk.Frame):
 class Exercise(tk.Frame):
     lesson = None
     learn = {"Alphabet": ExAlphabet, "Numbers": ExNumbers, "Food": ExFood, "Animals": ExAnimals, "Colors": ExColors, "Days & Months": ExDaysMonths}
-    def __init__(self, controller):
+    def __init__(self, controller, profile):
         tk.Frame.__init__(self, controller)
         self.controller = controller
         self.lrn = self.learn[self.lesson]
+        self.profile = profile
 
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)

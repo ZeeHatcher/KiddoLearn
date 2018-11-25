@@ -24,10 +24,7 @@ class Learn(tk.Frame):
 
         if self.index == len(self.controller.items) - 1:
             self.button_next["state"] = "disabled"
-            self.controller.end["text"] = "End Lesson"
-            self.controller.end["bg"] = SPECIAL
-            self.controller.end["activebackground"] = SPECIAL_D
-            self.controller.end["command"] = self.lesson_complete
+            self.controller.end.config(text="End Lesson", bg=SPECIAL, activebackground=SPECIAL_D, command=self.lesson_complete)
 
         self.display_item()
 

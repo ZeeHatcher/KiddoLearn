@@ -61,6 +61,8 @@ class Profiles(tk.Frame):
     def delete_profile(self):
         for prof in self.profiles_list:
             if prof.selected:
+                p_name = prof.name
+
                 i = self.profiles_list.index(prof)
                 prof.destroy()
                 self.profiles_list.pop(i)
@@ -72,7 +74,7 @@ class Profiles(tk.Frame):
                 profiles = check_file(f)
 
                 for p in profiles:
-                    if p["name"] == prof.name:
+                    if p["name"] == p_name:
                         profiles.pop(profiles.index(p))
 
                 with open(f, "w") as out_file:
@@ -84,7 +86,7 @@ class Profiles(tk.Frame):
 
                 delete_index = []
                 for rec in records:
-                    if rec["name"] == prof.name:
+                    if rec["name"] == p_name:
                         delete_index.append(records.index(rec))
 
                 for i in range(len(delete_index)-1, -1, -1):
@@ -120,13 +122,26 @@ class Profile(tk.Button):
             create_file(f)
             profiles = check_file(f)
 
+        records_f = format_txt(self.user + "_records")
+
+        try:
+            records = check_file(records_f)
+        except:
+            create_file(records_f)
+            records = check_file(records_f)
+
         for prof in profiles:
             if self.name == prof["name"]:
                 self.info.profile = self.name
                 self.info.var_list[0].set(prof["name"])
                 self.info.var_list[1].set(prof["age"])
                 self.info.var_list[2].set(prof["gender"])
-                self.info.var_list[4].set(prof["grade"])
+
+                ex = 0
+                for rec in records:
+                    if rec["name"] == self.name:
+                        ex += 1
+                self.info.var_list[4].set(str(ex))
 
                 completed = 0
                 for ls in lessons:
@@ -166,7 +181,7 @@ class ProfilesInfo(tk.Frame):
         self.infos.columnconfigure(0, weight=1)
         self.infos.columnconfigure(1, weight=1)
 
-        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Grade"]
+        self.info_list = ["Name", "Age", "Gender", "Lessons Completed", "Total Exercises Completed"]
 
         self.var_list = []
         for x in range(6):

@@ -264,19 +264,33 @@ class ExDaysMonths(tk.Frame):
         self.a_list.remove(self.a)
         col_list.remove(col)
 
-        for i in range(3):
-            try:
-                wrong_a = random.choice(self.a_list)
-                col = random.choice(col_list)
+        if self.controller.type == "1":
+            for ans in a_list:
+                if ans != self.a:
+                    wrong_a = ans
+                    break
 
-                wrong_ans = AnswerButton(answers, self, wrong_a)
-                wrong_ans.grid(row=0, column=col, padx=5)
+            col = random.choice(col_list)
 
-                self.a_list.remove(wrong_a)
-                col_list.remove(col)
+            wrong_ans = AnswerButton(answers, self, wrong_a)
+            wrong_ans.grid(row=0, column=col, padx=5)
 
-            except:
-                continue
+            col_list.remove(col)
+
+        else:
+            for i in range(3):
+                try:
+                    wrong_a = random.choice(self.a_list)
+                    col = random.choice(col_list)
+
+                    wrong_ans = AnswerButton(answers, self, wrong_a)
+                    wrong_ans.grid(row=0, column=col, padx=5)
+
+                    self.a_list.remove(wrong_a)
+                    col_list.remove(col)
+
+                except:
+                    continue
 
 class QuestionGIF(tk.Frame):
     def __init__(self, controller, gif):

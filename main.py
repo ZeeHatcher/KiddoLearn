@@ -8,7 +8,7 @@ class Root(tk.Tk):
     def __init__(self):
         tk.Tk.__init__(self)
 
-    def change_window(self, old, new):
+    def change_window(self, old, new): # Change windows between LoginMenu, CreateAccountMenu and Application
         old.destroy()
         new(self)
 
@@ -19,6 +19,7 @@ class LoginMenu(tk.Toplevel):
 
         self.protocol("WM_DELETE_WINDOW", self.root.destroy)
 
+        # LoginMenu GUI
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
         self.resizable(False, False)
@@ -59,7 +60,7 @@ class LoginMenu(tk.Toplevel):
         button_create = tk.Button(frame, text="Create New Account", command=lambda: root.change_window(self, CreateAccountMenu), bg=MISC, activebackground=MISC_D)
         button_create.pack(side="top", pady=2)
 
-    def check_login(self):
+    def check_login(self): # Checks existing accounts for a match
         existing_accounts = check_file(accounts)
 
         username = self.entry_username.get()
@@ -67,12 +68,12 @@ class LoginMenu(tk.Toplevel):
 
         authorized = False
 
-        for account in existing_accounts:
+        for account in existing_accounts: # Loops through list of existing accounts
             if username == account["username"] and password == account["password"]:
                 authorized = True
                 break
 
-        if authorized:
+        if authorized: # Process after checking
             self.destroy()
             Application.user = username
             Application(self.root)
@@ -86,6 +87,7 @@ class CreateAccountMenu(tk.Toplevel):
 
         self.protocol("WM_DELETE_WINDOW", self.root.destroy)
 
+        # CreateAccountMenu GUI
         self.title("Kiddo Learn")
         self.geometry(MEDIUM)
         self.resizable(False, False)
@@ -127,35 +129,35 @@ class CreateAccountMenu(tk.Toplevel):
         button_back = tk.Button(frame, text="Cancel", command=lambda: root.change_window(self, LoginMenu), bg=CANCEL, activebackground=CANCEL_D)
         button_back.pack(side="top", pady=2)
 
-    def check_create_account(self):
+    def check_create_account(self): # Checks existing accounts and input for conflicts
         username = self.entry_username.get()
         password = self.entry_password.get()
         confirm = self.entry_confirm.get()
         create = False
         existing_accounts = check_file(accounts)
 
-        if username != "" and password != "" and confirm != "":
-            if confirm == password:
+        if username != "" and password != "" and confirm != "": # Prevents empty username and password
+            if confirm == password: # Makes sure password is similar
                 create = True
             else:
                 self.message_var.set("Please make sure your password is identical")
         else:
             self.message_var.set("Please fill in your username and password")
 
-        for i in [username, password]:
+        for i in [username, password]: # Prevents spaces in username and password
             for letter in i:
                 if letter == " ":
                     self.message_var.set("Only lowercase/uppercase alphabets, numbers and symbols are allowed")
                     create = False
                     break
 
-        for account in existing_accounts:
+        for account in existing_accounts: # Checks existing accounts for identical username
             if username == account["username"]:
                 create = False
                 self.message_var.set("Username has been taken.")
                 break
 
-        if create:
+        if create: # Create and write to text file
             f = format_txt(username)
             create_file(f)
 
@@ -182,12 +184,13 @@ class Application(tk.Toplevel):
         self.active_frame = self.frames[0](self)
         self.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
 
+        # Logo
         logo_img = tk.PhotoImage(file=r"images\kiddo_learn.gif")
         self.logo = tk.Label(self, image=logo_img)
         self.logo.image = logo_img
         self.logo.place(anchor="n", relx=0.5, y=25, relwidth=1)
 
-    def back_MainMenu(self, old):
+    def back_MainMenu(self, old): # Function to return to MainMenu
         Lesson.lesson = None
         Exercise.lesson = None
         LessonMenu.profile = None
@@ -202,6 +205,7 @@ class MainMenu(tk.Frame):
         tk.Frame.__init__(self, controller)
         self.controller = controller
 
+        # MainMenu GUI
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
 
@@ -231,23 +235,24 @@ class MainMenu(tk.Frame):
         self.button_logout = tk.Button(buttons, text="Logout", command=self.logout, width=10, bg=CANCEL, activebackground=CANCEL_D)
         self.button_logout.pack(side="left", padx=10)
 
-    def logout(self):
+    def logout(self): # Logout and go to LoginMenu
         LessonMenu.profile = None
         Application.user = None
         self.controller.root.change_window(self.controller, LoginMenu)
 
-    def to_LessonMenu(self, mode):
-        if mode == 0:
+    def to_LessonMenu(self, mode): # Go to LessonMenu if button_lesson or button_test was pressed
+        if mode == 0: # Checks if button_lesson or button_test was pressed
             LessonMenu.test = False
         else:
             LessonMenu.test = True
 
+        # Creates LessonMenu and displays it
         self.controller.active_frame = LessonMenu(self.controller)
         self.controller.active_frame.place(x=0, y=50, relwidth=1, relheight=1)
         self.controller.logo.lift()
         self.destroy()
 
-    def set_profile(self, prof):
+    def set_profile(self, prof): # Sets LessonMenu.profile to the name of the selected profile
         LessonMenu.profile = prof
 
 class LessonMenu(tk.Frame):
@@ -258,6 +263,7 @@ class LessonMenu(tk.Frame):
         tk.Frame.__init__(self, controller)
         self.controller = controller
 
+        # LessonMenu GUI
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.4, relwidth=1)
 
@@ -272,7 +278,7 @@ class LessonMenu(tk.Frame):
 
         lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
 
-        for l in lessons_list:
+        for l in lessons_list: # Creates and displays LessonMenuButton in a 3x2 grid
             i = lessons_list.index(l)
 
             if i < len(lessons_list) / 2:
@@ -282,7 +288,7 @@ class LessonMenu(tk.Frame):
                 bt = LessonMenuButton(lessons, self, l)
                 bt.grid(row=1, column=int(i-(len(lessons_list) / 2)), pady=2, padx=2)
 
-    def to_Menu(self, menu, ls):
+    def to_Menu(self, menu, ls): # Go to the appropriate frame based on if button_lesson or button_test was pressed
         if menu == 0:
             self.controller.active_frame = SelectMenu(self.controller, ls, LessonMenu.profile)
 
@@ -301,6 +307,7 @@ class SelectMenu(tk.Frame):
         self.controller = controller
         self.profile = profile
 
+        # SelectMenu GUI
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.5, relwidth=1)
 
@@ -322,7 +329,7 @@ class SelectMenu(tk.Frame):
         self.lesson_select_buttons = []
 
         i = 0
-        for r in range(int(math.ceil(len(self.items) / 5))):
+        for r in range(int(math.ceil(len(self.items) / 5))): # Creates and display SelectMenuButton and SelectMenuButtonRow
             b_r = SelectMenuButtonRow(buttons, self, r)
             b_r.grid(row=r, column=0, padx=5, pady=2)
 
@@ -338,7 +345,7 @@ class SelectMenu(tk.Frame):
         f = format_txt(Application.user)
         profiles = check_file(f)
 
-        for prof in profiles:
+        for prof in profiles: # Checks existing profile for completed lesson items and colors them green
             if self.profile == prof["name"]:
                 for i in prof["items"][self.lesson]:
                     bt = self.lesson_select_buttons[i]
@@ -347,26 +354,27 @@ class SelectMenu(tk.Frame):
         self.button_select_all = tk.Button(buttons, text="Select All", command=self.select_all, width=20, bg=SPECIAL, activebackground=SPECIAL_D)
         self.button_select_all.grid(column=0, columnspan=6, pady=5)
 
-    def begin_lesson(self):
+    def begin_lesson(self): # Checks selected items and begins a lesson with the selected items
         selected = []
-        for button in self.lesson_select_buttons:
+        for button in self.lesson_select_buttons: # Loops through list of buttons to see which one is selected
             if button.selected:
                 selected.append(button.item)
 
+        # Begins a lesson with the selected items
         Lesson.lesson = self.lesson
         self.controller.active_frame = Lesson(self.controller, selected, self.profile)
         self.controller.active_frame.place(relwidth=1, relheight=1)
         self.destroy()
 
-    def select_all(self):
-        for button in self.lesson_select_buttons:
+    def select_all(self): # Quality-of-life function to select all buttons
+        for button in self.lesson_select_buttons: # Checks if all the buttons have been selected or not
             if not button.selected:
                 all_selected = False
                 break
             else:
                 all_selected = True
 
-        for button in self.lesson_select_buttons:
+        for button in self.lesson_select_buttons: # Selects/Deselects the buttons
             if all_selected:
                 button.select_button()
             else:
@@ -375,7 +383,7 @@ class SelectMenu(tk.Frame):
 
         self.check_selected()
 
-    def check_selected(self):
+    def check_selected(self): # Enables the Begin button only if at least one item is selected
         for button in self.lesson_select_buttons:
             if button.selected:
                 self.begin["state"] = "normal"
@@ -383,7 +391,7 @@ class SelectMenu(tk.Frame):
             else:
                 self.begin["state"] = "disabled"
 
-    def back(self):
+    def back(self): # Back to LessonMenu
         Lesson.lesson = None
         Exercise.lesson = None
         self.controller.active_frame = LessonMenu(self.controller)
@@ -391,11 +399,11 @@ class SelectMenu(tk.Frame):
         self.controller.logo.lift()
         self.destroy()
 
-if __name__ == "__main__":
+if __name__ == "__main__": # Start of Program
     root = Root()
     root.withdraw()
 
-    try:
+    try: # Checks for accounts file
         check_file(accounts)
         LoginMenu(root)
     except:

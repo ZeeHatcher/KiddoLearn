@@ -23,15 +23,15 @@ lesson_items = {"Alphabet": tuple("ABCDEFGHIJKLMNOPQRSTUVWXYZ"),
 
 accounts = r"data\accounts.txt"
 
-def format_txt(name):
+def format_txt(name): # Formats string to access user .txt file
     f = "data\\" + name + ".txt"
     return f
 
-def create_file(file_name):
+def create_file(file_name): # Creates file if inexistent
     with open(file_name, "w") as new_file:
         new_file.write("")
 
-def check_file(file_name):
+def check_file(file_name): # Returns the contents of file
     with open(file_name, "r") as pull_file:
         cont = pull_file.readlines()
         f = []
@@ -42,17 +42,17 @@ def check_file(file_name):
 
     return f
 
-def format_gif(folder, gif):
+def format_gif(folder, gif): # Formats string to access gif files
     f = "images\\lessons\\" + folder + "\\" + gif
 
     return f
 
-def format_wav(folder, item):
+def format_wav(folder, item): # Formats string to access wav files
     f = "sounds\\" + folder + "\\" + item + ".wav"
 
     return f
 
-def check_description(lesson):
+def check_description(lesson): # Returns descriptions for lessons
     desc_file = "txt_files\\lesson\\" + lesson + ".txt"
 
     with open(desc_file, "r") as f:
@@ -65,7 +65,7 @@ def check_description(lesson):
 
     return descriptions
 
-def check_exercise(lesson):
+def check_exercise(lesson): # Returns question and answers for exercises
     ex_file = "txt_files\\exercise\\" + lesson + ".txt"
 
     with open(ex_file, "r") as f:

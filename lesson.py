@@ -53,7 +53,7 @@ class Learn(tk.Frame):
 
         self.display_item()
 
-    def prev_item(self):
+    def prev_item(self): # Go to previous item
         self.button_next["state"] = "normal"
 
         if self.index > 0:
@@ -64,7 +64,7 @@ class Learn(tk.Frame):
 
         self.display_item()
 
-    def next_item(self):
+    def next_item(self): # Go to next item
         self.button_prev["state"] = "normal"
 
         if self.index < len(self.controller.items) - 1:
@@ -79,7 +79,7 @@ class Learn(tk.Frame):
 
         self.display_item()
 
-    def display_item(self):
+    def display_item(self): # Displays the current item with its corresponding description, examples and sounds
         for child in self.frame.winfo_children():
             child.destroy()
 
@@ -96,7 +96,7 @@ class Learn(tk.Frame):
                 bt = tk.Button(l, text="Play Sound", command=play, bg=SPECIAL, activebackground=SPECIAL_D)
                 bt.pack(side="top", pady=10)
 
-    def lesson_complete(self):
+    def lesson_complete(self): # Saves the current items as completed so it can be shown as green in the LessonMenu and SelectMenu
         completed = []
         for item in self.controller.items:
             i = lesson_items[self.controller.lesson].index(item)
@@ -105,7 +105,7 @@ class Learn(tk.Frame):
         f = format_txt(self.controller.controller.user)
         profiles = check_file(f)
 
-        for prof in profiles:
+        for prof in profiles: # Prevents doubling up of the same items and adds new items
             if self.controller.profile == prof["name"]:
                 for i in completed:
                     if not i in prof["items"][self.controller.lesson]:
@@ -120,6 +120,8 @@ class Learn(tk.Frame):
 
         self.controller.controller.back_MainMenu(self.controller)
 
+# Frames for different Lessons
+# Shows desc, examples and extra misc. items
 class LearnAlphabet(tk.Frame):
     def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
@@ -217,7 +219,7 @@ class LearnDaysMonths(tk.Frame):
             tk.Label(items, text=str(i+1)).grid(row=i, column=0, sticky="e")
             tk.Label(items, text=ex).grid(row=i, column=1, sticky="w")
 
-class ExampleGIF(tk.Frame):
+class ExampleGIF(tk.Frame): # GIF for certain lesson descriptions
     def __init__(self, parent, controller, gif):
         tk.Frame.__init__(self, parent, controller)
         gif_file = format_gif(controller.controller.lesson, gif)

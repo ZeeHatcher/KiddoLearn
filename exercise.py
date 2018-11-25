@@ -12,7 +12,7 @@ class Exercise(tk.Frame):
                       "Animals": ExAnimals,
                       "Colors": ExColors,
                       "Days & Months": ExDaysMonths}
-                      
+
         self.controller = controller
         self.lrn = self.learn[self.lesson]
         self.profile = profile
@@ -39,7 +39,7 @@ class Ex(tk.Frame):
 
         self.random_question()
 
-    def random_question(self):
+    def random_question(self): # Randomly chooses a question and displays it
         self.clear_frame()
 
         self.type = str(random.randrange(len(self.exercise)) + 1)
@@ -58,13 +58,13 @@ class Ex(tk.Frame):
 
         self.controller.lrn(self.frame, self, q, a, a_list).pack(side="top")
 
-    def clear_frame(self):
+    def clear_frame(self): # Clear finished exercises for new ones
         for child in self.frame.winfo_children():
             child.destroy()
 
-    def to_Results(self):
-        pass
-
+# Ex for different lessons
+# Shows questions and answer buttons
+# Answer buttons will have random items except the correct answer, and placed randomly
 class ExAlphabet(tk.Frame):
     def __init__(self, parent, controller, q, a, a_list):
         tk.Frame.__init__(self, parent)
@@ -82,12 +82,14 @@ class ExAlphabet(tk.Frame):
         col_list = [0, 1, 2, 3]
         col = random.choice(col_list)
 
+        # Correct answer
         correct_ans = AnswerButton(answers, self, a)
         correct_ans.grid(row=0, column=col, padx=5)
 
         self.a_list.remove(self.a)
         col_list.remove(col)
 
+        # Wrong answers
         if self.controller.type == "3":
             for ans in a_list:
                 if ans != self.a:
@@ -315,7 +317,7 @@ class ExDaysMonths(tk.Frame):
                 except:
                     continue
 
-class QuestionGIF(tk.Frame):
+class QuestionGIF(tk.Frame): # GIFs for certain questions
     def __init__(self, controller, gif):
         tk.Frame.__init__(self, controller)
         gif_file = format_gif(controller.controller.controller.lesson, gif)
@@ -325,7 +327,7 @@ class QuestionGIF(tk.Frame):
         img.image = gif_img
         img.pack()
 
-class QuestionCircles(tk.Frame):
+class QuestionCircles(tk.Frame): # Circles for ExNumber
     def __init__(self, controller, num):
         tk.Frame.__init__(self, controller)
 
@@ -337,7 +339,7 @@ class QuestionCircles(tk.Frame):
 
 class AnswerButton(tk.Button):
     def __init__(self, parent, controller, a):
-        tk.Button.__init__(self, parent, text=a, command=self.test)
+        tk.Button.__init__(self, parent, text=a, command=self.ans)
         self.a = a
         self.controller = controller
         self.ex = controller.controller
@@ -345,7 +347,7 @@ class AnswerButton(tk.Button):
         self["width"] = 10
         self["height"] = int(self["width"] / 4)
 
-    def test(self):
+    def ans(self):
         if self.a == self.controller.a:
             self.ex.correct_count += 1
         else:
@@ -367,6 +369,7 @@ class Results(tk.Frame):
 
         self.total = correct_count + wrong_count
 
+        # Results GUI
         h2 = tk.Label(self, text="Results", font=H2)
         h2.pack(side="top", pady=5)
 
@@ -393,7 +396,7 @@ class Results(tk.Frame):
 
         self.controller.controller.end.config(text="End Lesson", bg=SPECIAL, activebackground=SPECIAL_D, command=self.save_results)
 
-    def save_results(self):
+    def save_results(self): # Saves the current exercise results into *_records.txt file
         user = self.controller.controller.controller.user
         profile = self.controller.controller.profile
         lesson = self.controller.controller.lesson

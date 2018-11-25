@@ -12,6 +12,7 @@ class Profiles(tk.Frame):
         self.pack_propagate(False)
         self["height"] = 300
 
+        # Profiles GUI
         h2 = tk.Label(self, text="Profiles", font=H2, pady=5)
         h2.pack(side="top")
 
@@ -28,12 +29,12 @@ class Profiles(tk.Frame):
         self.profs.pack(side="top", pady=10, ipadx=5, fill="y")
         self.update_profiles()
 
-    def add_profile(self):
-        if AddProfileMenu.adding_profile == False:
+    def add_profile(self): # Opens AddProfileMenu window
+        if AddProfileMenu.adding_profile == False: # Prevents multiple AddProfileMenu windows
             AddProfileMenu.adding_profile = True
             AddProfileMenu(self, self.user)
 
-    def update_profiles(self):
+    def update_profiles(self): # Resets the list of profiles when updated
         for prof in self.profiles_list:
             prof.destroy()
 
@@ -48,7 +49,7 @@ class Profiles(tk.Frame):
             profiles = check_file(f)
 
         row_count = 1
-        for prof in profiles:
+        for prof in profiles: # Creates existing profiles
             name = prof["name"]
             age = prof["age"]
 
@@ -58,9 +59,9 @@ class Profiles(tk.Frame):
 
             row_count += 1
 
-    def delete_profile(self):
+    def delete_profile(self): # Deletes existing profiles
         for prof in self.profiles_list:
-            if prof.selected:
+            if prof.selected: # Checks for the selected profile to delete
                 p_name = prof.name
 
                 i = self.profiles_list.index(prof)
@@ -73,7 +74,7 @@ class Profiles(tk.Frame):
                 f = format_txt(self.user)
                 profiles = check_file(f)
 
-                for p in profiles:
+                for p in profiles: # Removes selected profile from .txt file
                     if p["name"] == p_name:
                         profiles.pop(profiles.index(p))
 
@@ -85,7 +86,7 @@ class Profiles(tk.Frame):
                 records = check_file(record_f)
 
                 delete_index = []
-                for rec in records:
+                for rec in records: # Removes records of selected profile from .txt file
                     if rec["name"] == p_name:
                         delete_index.append(records.index(rec))
 
@@ -96,6 +97,7 @@ class Profiles(tk.Frame):
                     for rec in records:
                         out_file.write("{}\n".format(rec))
 
+        # Disables the button as no profile is selected after deletion
         self.button_delete["state"] = "disabled"
         self.controller.button_lesson["state"] = "disabled"
         self.controller.button_test["state"] = "disabled"
@@ -113,7 +115,7 @@ class Profile(tk.Button):
         self["borderwidth"] = 1
         self["bg"] = "white"
 
-    def select_profile(self):
+    def select_profile(self): # Process after click
         lessons = list(lesson_items.keys())
         f = format_txt(self.user)
         try:
@@ -130,7 +132,7 @@ class Profile(tk.Button):
             create_file(records_f)
             records = check_file(records_f)
 
-        for prof in profiles:
+        for prof in profiles: # Displays the information of profile
             if self.name == prof["name"]:
                 self.info.profile = self.name
                 self.info.var_list[0].set(prof["name"])
@@ -150,15 +152,17 @@ class Profile(tk.Button):
 
                 self.info.var_list[3].set(str(completed) + "/6")
 
-        for prof in self.controller.profiles_list:
+        for prof in self.controller.profiles_list: # Deselects other profiles
             prof.selected = False
             prof["bg"] = "white"
 
+        # Enables buttons for use on selected profile
         self.controller.controller.profiles.button_delete["state"] = "normal"
         self.controller.controller.button_lesson["state"] = "normal"
         self.controller.controller.button_test["state"] = "normal"
         self.controller.controller.info.bt_stat["state"] = "normal"
 
+        # Feedback to show the selected profile
         self.selected = True
         self["bg"] = "#c4faff"
 
@@ -173,6 +177,7 @@ class ProfilesInfo(tk.Frame):
         self.pack_propagate(False)
         self["height"] = 300
 
+        # ProfilesInfo GUI
         h2 = tk.Label(self, text="Info", font=H2, pady=5)
         h2.pack(side="top")
 
@@ -205,6 +210,7 @@ class AddProfileMenu(tk.Toplevel):
 
         self.protocol("WM_DELETE_WINDOW", self.quit_profile)
 
+        # AddProfileMenu GUI
         frame = tk.Frame(self)
         frame.place(anchor="center", relx=0.5, rely=0.5)
 
@@ -256,8 +262,8 @@ class AddProfileMenu(tk.Toplevel):
         button_cancel = tk.Button(buttons, text="Cancel", command=self.quit_profile, bg=CANCEL, activebackground=CANCEL_D)
         button_cancel.pack(side="left", padx=10)
 
-    def check_profile(self):
-        if (self.entry_name.get() != "") and (self.entry_age.get() != "") and (self.gender_var.get() != ""):
+    def check_profile(self): # Checks input for errors
+        if (self.entry_name.get() != "") and (self.entry_age.get() != "") and (self.gender_var.get() != ""): # Prevents empty names, age and gender
             f = format_txt(self.user)
             try:
                 profiles = check_file(f)
@@ -265,6 +271,7 @@ class AddProfileMenu(tk.Toplevel):
                 create_file(f)
                 profiles = check_file(f)
 
+            # Creates the profile dictionary for .txt output
             prof = {"name": self.entry_name.get(),
                     "age": self.entry_age.get(),
                     "gender": self.gender_var.get(),
@@ -303,12 +310,12 @@ class LessonMenuButton(tk.Button):
         f = format_txt(self.controller.controller.user)
         profiles = check_file(f)
 
-        if not self.controller.test:
+        if not self.controller.test: # In "Lesson" mode, display green color for completed lesson items
             for prof in profiles:
                 if self.controller.profile == prof["name"] and len(prof["items"][self.lesson]) == len(lesson_items[self.lesson]):
                         self["bg"] = SUBMIT
 
-    def check_mode(self):
+    def check_mode(self): # Checks if "lesson" mode or "test" mode
         if self.controller.test:
             self.controller.to_Menu(1, self.lesson)
         else:
@@ -324,7 +331,7 @@ class SelectMenuButton(tk.Button):
 
         self.selected = False
 
-    def select_button(self):
+    def select_button(self): # Feedback to show selection/deselection
         if self.selected:
             self.selected = False
             self["relief"] = "raised"
@@ -343,7 +350,7 @@ class SelectMenuButtonRow(tk.Button):
         self["bg"] = SPECIAL
         self["activebackground"] = SPECIAL_D
 
-    def select_row(self):
+    def select_row(self): # Quality-of-life function to select a row of items
         row_start = self.row * 5
 
         for i in range(row_start, row_start + 5):
@@ -387,7 +394,7 @@ class Statistics(tk.Toplevel):
         buttons.pack(side="top")
 
         self.bt_list = []
-        for ls in lessons_list:
+        for ls in lessons_list: # Displays buttons to show graphs for different lessons
             i = lessons_list.index(ls)
             bt = StatisticsButton(buttons, self, ls)
 
@@ -407,7 +414,7 @@ class StatisticsButton(tk.Button):
         self.ls = ls
         self.selected = False
 
-    def select_graph(self):
+    def select_graph(self): # Displays the graph with the corresponding lesson
         for bt in self.controller.bt_list:
             bt.selected = False
             bt["bg"] = "white"
@@ -435,14 +442,14 @@ class Graph(tk.Frame):
         records = check_file(records_f)
 
         results = []
-        for rec in records:
+        for rec in records: # Get data of profile from *_records.txt
             if rec["name"] == self.profile and rec["lesson"] == self.lesson:
                 results.append(rec["correct"])
 
         x_change = 25
         y_change = 15
         min_x = 50
-        if (len(results) * x_change) < 400:
+        if (len(results) * x_change) < 400: # Minimum width for graph
             max_x = 350
         else:
             max_x = (len(results) * x_change) + min_x
@@ -458,6 +465,7 @@ class Graph(tk.Frame):
 
         scrollbar.config(command=c.xview)
 
+        # Background coloring to indicate grades (red=fail, green=pass, yellow=excellent)
         fail_y = min_y - 10 * y_change
         pass_y = min_y - 16 * y_change
 
@@ -465,18 +473,21 @@ class Graph(tk.Frame):
         c.create_rectangle(min_x, fail_y, max_x, pass_y, fill="#bcffc1")
         c.create_rectangle(min_x, pass_y, max_x, max_y, fill="#fffdbc")
 
+        # X-axis and Y-axis
         c.create_line(min_x, min_y, max_x, min_y)
         c.create_line(min_x, min_y, min_x, max_y)
 
+        # Displays the 0 at the starting point of X-axis
         c.create_text(min_x, min_y+10, text="0")
 
-        for score in range(21):
+        for score in range(21): # Displays the score of 1-20 on the Y-axis
             y = min_y - score * y_change
             c.create_text(min_x-10, y, text=str(score))
 
+
         x1 = min_x
         y1 = min_y
-        for i in range(len(results)):
+        for i in range(len(results)): # Plots and draws the line graph
             x2 = x1 + x_change
             y2 = min_y - results[i] * y_change
 

@@ -369,7 +369,7 @@ class Results(tk.Frame):
             create_file(f)
             records = check_file(f)
 
-        res = {"name": user, "lesson": lesson, "correct": self.correct_count}
+        res = {"name": profile, "lesson": lesson, "correct": self.correct_count}
 
         records.append(res)
 

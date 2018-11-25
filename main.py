@@ -71,8 +71,6 @@ class LoginMenu(tk.Toplevel):
             if username == account["username"] and password == account["password"]:
                 authorized = True
                 break
-            else:
-                continue
 
         if authorized:
             self.destroy()
@@ -150,16 +148,12 @@ class CreateAccountMenu(tk.Toplevel):
                     self.message_var.set("Only lowercase/uppercase alphabets, numbers and symbols are allowed")
                     create = False
                     break
-                else:
-                    continue
 
         for account in existing_accounts:
             if username == account["username"]:
                 create = False
                 self.message_var.set("Username has been taken.")
                 break
-            else:
-                continue
 
         if create:
             f = format_txt(username)
@@ -224,7 +218,7 @@ class MainMenu(tk.Frame):
         self.button_test = tk.Button(buttons, text="Test", command=lambda: self.to_LessonMenu(1), width=10, state="disabled", bg=SPECIAL, activebackground=SPECIAL_D)
         self.button_test.pack(side="left", padx=10)
 
-        self.button_logout = tk.Button(buttons, text="Logout", command=self.logout, width=10)
+        self.button_logout = tk.Button(buttons, text="Logout", command=self.logout, width=10, bg=CANCEL, activebackground=CANCEL_D)
         self.button_logout.pack(side="left", padx=10)
 
     def logout(self):
@@ -356,8 +350,6 @@ class SelectMenu(tk.Frame):
         for button in self.lesson_select_buttons:
             if button.selected:
                 selected.append(button.item)
-            else:
-                continue
 
         Lesson.lesson = self.lesson
         self.controller.active_frame = Lesson(self.controller, selected, self.profile)

@@ -69,28 +69,35 @@ class Profiles(tk.Frame):
                     var.set("")
 
                 f = format_txt(self.user)
-                try:
-                    profiles = check_file(f)
-                except:
-                    create_file(f)
-                    profiles = check_file(f)
+                profiles = check_file(f)
 
                 for p in profiles:
-                    if prof.name == p["name"]:
+                    if p["name"] == prof.name:
                         profiles.pop(profiles.index(p))
-                    else:
-                        continue
 
                 with open(f, "w") as out_file:
                     for prof in profiles:
                         out_file.write("{}\n".format(prof))
 
-            else:
-                continue
+                record_f = format_txt(self.user + "_records")
+                records = check_file(record_f)
+
+                delete_index = []
+                for rec in records:
+                    if rec["name"] == prof.name:
+                        delete_index.append(records.index(rec))
+
+                for i in range(len(delete_index)-1, -1, -1):
+                    records.pop(delete_index[i])
+
+                with open(record_f, "w") as out_file:
+                    for rec in records:
+                        out_file.write("{}\n".format(rec))
 
         self.button_delete["state"] = "disabled"
         self.controller.button_lesson["state"] = "disabled"
         self.controller.button_test["state"] = "disabled"
+        self.controller.info.bt_stat["state"] = "disabled"
 
 class Profile(tk.Button):
     def __init__(self, parent, controller, user, name):
@@ -126,8 +133,6 @@ class Profile(tk.Button):
                         completed += 1
 
                 self.info.var_list[3].set(str(completed) + "/6")
-            else:
-                continue
 
         for prof in self.controller.profiles_list:
             prof.selected = False
@@ -136,6 +141,7 @@ class Profile(tk.Button):
         self.controller.controller.profiles.button_delete["state"] = "normal"
         self.controller.controller.button_lesson["state"] = "normal"
         self.controller.controller.button_test["state"] = "normal"
+        self.controller.controller.info.bt_stat["state"] = "normal"
 
         self.selected = True
         self["bg"] = "#c4faff"
@@ -168,6 +174,9 @@ class ProfilesInfo(tk.Frame):
             i = self.info_list.index(info)
             tk.Label(self.infos, text=info, bg="white").grid(row=i, column=0, sticky="w")
             tk.Label(self.infos, textvariable=self.var_list[i], bg="white").grid(row=i, column=1, sticky="e")
+
+        self.bt_stat = tk.Button(self, width=10, text="Statistics", bg=MISC, activebackground=MISC_D, state="disabled")
+        self.bt_stat.pack(side="top", pady=10)
 
 class AddProfileMenu(tk.Toplevel):
     adding_profile = False
@@ -349,3 +358,15 @@ class SelectMenuButtonRow(tk.Button):
                 break
 
         self.controller.check_selected()
+
+class Statistics(tk.Toplevel):
+    def __init__(self, controller, profile, lesson):
+        tk.Toplevel.__init__(self)
+        lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
+
+        buttons = tk.Frame(self)
+        buttons.pack(side="top", fill="x")
+
+        for ls in lessons_list:
+            bt = tk.Button(buttons, text=ls, width=10)
+            bt.pack(side="left")

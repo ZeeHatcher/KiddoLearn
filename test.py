@@ -1,9 +1,10 @@
 import tkinter as tk
-results = [2, 6, 5, 6, 4, 5, 7, 8, 9, 10, 11, 12, 13, 14,15]
 
+results = [1, 2, 3, 4, 7, 7, 7, 4, 3, 1, 2]
 class Graph(tk.Frame):
-    def __init__(self, parent):
+    def __init__(self, parent, profile, lesson):
         tk.Frame.__init__(self, parent)
+        self.lesson = lesson
         min_x = 50
         max_x = (len(results) * 50) + min_x
         min_y = 450
@@ -12,7 +13,7 @@ class Graph(tk.Frame):
         scrollbar = tk.Scrollbar(self, orient="horizontal")
         scrollbar.pack(side="bottom", fill="x")
 
-        c = tk.Canvas(self, height=500, xscrollcommand=scrollbar.set, scrollregion=(0, 0, max_x, 0))
+        c = tk.Canvas(self, height=500, xscrollcommand=scrollbar.set, scrollregion=(0, 0, max_x+50, 0))
         c.pack(side="top")
 
         scrollbar.config(command=c.xview)
@@ -31,7 +32,7 @@ class Graph(tk.Frame):
             y2 = min_y - results[i] * 20
 
             c.create_line(x1, y1, x2, y2)
-            c.create_oval(x1-3, y1-3, x1+3, y1+3, fill="black")
+            c.create_oval(x2-3, y2-3, x2+3, y2+3, fill="black")
             c.create_text(x1, min_y+10, text=str(i))
 
             y1 = y2
@@ -39,5 +40,5 @@ class Graph(tk.Frame):
 
 if __name__ == "__main__":
     root = tk.Tk()
-    Graph(root).pack()
+    Graph(root, "Jonathan", "Alphabet").pack()
     root.mainloop()

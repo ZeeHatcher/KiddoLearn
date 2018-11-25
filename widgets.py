@@ -122,6 +122,7 @@ class Profile(tk.Button):
 
         for prof in profiles:
             if self.name == prof["name"]:
+                self.info.profile = self.name
                 self.info.var_list[0].set(prof["name"])
                 self.info.var_list[1].set(prof["age"])
                 self.info.var_list[2].set(prof["gender"])
@@ -152,6 +153,7 @@ class ProfilesInfo(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
+        self.profile = None
 
         self.pack_propagate(False)
         self["height"] = 300
@@ -175,7 +177,7 @@ class ProfilesInfo(tk.Frame):
             tk.Label(self.infos, text=info, bg="white").grid(row=i, column=0, sticky="w")
             tk.Label(self.infos, textvariable=self.var_list[i], bg="white").grid(row=i, column=1, sticky="e")
 
-        self.bt_stat = tk.Button(self, width=10, text="Statistics", bg=MISC, activebackground=MISC_D, state="disabled")
+        self.bt_stat = tk.Button(self, width=10, text="Statistics", bg=MISC, activebackground=MISC_D, state="disabled", command=lambda: Statistics(self, self.profile))
         self.bt_stat.pack(side="top", pady=10)
 
 class AddProfileMenu(tk.Toplevel):
@@ -360,10 +362,15 @@ class SelectMenuButtonRow(tk.Button):
         self.controller.check_selected()
 
 class Statistics(tk.Toplevel):
-    def __init__(self, controller, profile, lesson):
+    def __init__(self, controller, profile):
         tk.Toplevel.__init__(self)
+        self.controller = controller
+        self.profile = profile
+
+        self.geometry(MEDIUM)
         lessons_list = ["Alphabet", "Numbers", "Food", "Animals", "Colors","Days & Months"]
 
+        print(self.profile)
         buttons = tk.Frame(self)
         buttons.pack(side="top", fill="x")
 

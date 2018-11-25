@@ -209,6 +209,7 @@ class MainMenu(tk.Frame):
         self.profiles = Profiles(content, self, Application.user)
         self.profiles.grid(row=0, column=0, sticky="nsew", padx=10)
 
+
         buttons = tk.Frame(frame)
         buttons.pack(side="top")
 

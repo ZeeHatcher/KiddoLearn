@@ -1,1 +1,0 @@
-{'gender': 'Male', 'name': 'Jonathan', 'grade': '~', 'age': '2', 'items': {'Animals': [], 'Colors': [], 'Alphabet': [], 'Numbers': [], 'Food': [], 'Days & Months': []}}

@@ -1,2 +1,2 @@
-{"item": "Days", "description": "Days In A Week", "examples": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]}
+{"item": "Days", "description": "Days In A Week", "examples": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]}
 {"item": "Months", "description": "Months In A Year", "examples": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]}

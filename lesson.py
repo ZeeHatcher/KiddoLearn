@@ -1,5 +1,6 @@
 import tkinter as tk
 import math
+import winsound
 from fileio import *
 
 class Lesson(tk.Frame):
@@ -11,7 +12,7 @@ class Lesson(tk.Frame):
                       "Animals": LearnAnimals,
                       "Colors": LearnColors,
                       "Days & Months": LearnDaysMonths}
-                      
+
         tk.Frame.__init__(self, controller)
         self.controller = controller
         self.items = items
@@ -86,7 +87,14 @@ class Learn(tk.Frame):
 
         for item in self.description:
             if self.current_item == item["item"]:
-                self.controller.lrn(self.frame, self, item["description"], item["examples"]).pack(side="top")
+                l = self.controller.lrn(self.frame, self, item["item"], item["description"], item["examples"])
+                l.pack(side="top")
+
+                wav = format_wav(self.controller.lesson.lower(), item["item"].lower())
+                play = lambda: winsound.PlaySound(wav, winsound.SND_FILENAME)
+
+                bt = tk.Button(l, text="Play Sound", command=play, bg=SPECIAL, activebackground=SPECIAL_D)
+                bt.pack(side="top", pady=10)
 
     def lesson_complete(self):
         completed = []
@@ -113,8 +121,10 @@ class Learn(tk.Frame):
         self.controller.controller.back_MainMenu(self.controller)
 
 class LearnAlphabet(tk.Frame):
-    def __init__(self, parent, controller, description, examples):
+    def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
+        self.item = item.lower()
+        self.lesson = controller.controller.lesson.lower()
 
         desc = tk.Label(self, text=description, font=DESC)
         desc.pack(side="top")
@@ -123,7 +133,7 @@ class LearnAlphabet(tk.Frame):
         ex.pack(side="top")
 
 class LearnNumbers(tk.Frame):
-    def __init__(self, parent, controller, description, examples):
+    def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
         self.num = int(controller.current_item)
 
@@ -143,8 +153,9 @@ class LearnNumbers(tk.Frame):
         ex.pack(side="top")
 
 class LearnFood(Learn):
-    def __init__(self, parent, controller, description, examples):
+    def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
+        self.item = item.lower()
 
         desc = tk.Label(self, text=description, font=DESC)
         desc.pack(side="top")
@@ -161,8 +172,9 @@ class LearnFood(Learn):
             ex.pack(side="left")
 
 class LearnAnimals(tk.Frame):
-    def __init__(self, parent, controller, description, examples):
+    def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
+        self.item = item.lower()
 
         desc = tk.Label(self, text=description, font=DESC)
         desc.pack(side="top")
@@ -175,8 +187,9 @@ class LearnAnimals(tk.Frame):
         ex.pack(side="top")
 
 class LearnColors(tk.Frame):
-    def __init__(self, parent, controller, description, examples):
+    def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
+        self.item = item.lower()
 
         desc = tk.Label(self, text=description, font=DESC)
         desc.pack(side="top")
@@ -189,8 +202,9 @@ class LearnColors(tk.Frame):
         ex.pack(side="top")
 
 class LearnDaysMonths(tk.Frame):
-    def __init__(self, parent, controller, description, examples):
+    def __init__(self, parent, controller, item, description, examples):
         tk.Frame.__init__(self, parent)
+        self.item = item.lower()
 
         desc = tk.Label(self, text=description, font=DESC)
         desc.pack(side="top")

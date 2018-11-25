@@ -47,6 +47,11 @@ def format_gif(folder, gif):
 
     return f
 
+def format_wav(folder, item):
+    f = "sounds\\" + folder + "\\" + item + ".wav"
+
+    return f
+
 def check_description(lesson):
     desc_file = "txt_files\\lesson\\" + lesson + ".txt"
 

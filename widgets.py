@@ -450,7 +450,7 @@ class Graph(tk.Frame):
         y_change = 15
         min_x = 50
         if (len(results) * x_change) < 400: # Minimum width for graph
-            max_x = 350
+            max_x = 400
         else:
             max_x = (len(results) * x_change) + min_x
 
